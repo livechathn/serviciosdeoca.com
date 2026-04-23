@@ -43,6 +43,8 @@
             transition: all 0.6s ease;
             z-index: 100;
             backdrop-filter: blur(10px);
+            cursor: pointer;
+            user-select: none;
         }
 
         body.dark .theme-indicator {
@@ -280,9 +282,9 @@
         }
     </style>
 </head>
-<body class="dark">
+<body>
     <!-- THEME INDICATOR -->
-    <div class="theme-indicator">&#9670; <span class="theme-label">DARK MODE</span></div>
+    <div class="theme-indicator" onclick="cycleThemeMode()">&#9670; <span class="theme-label">AUTO</span></div>
 
     <!-- HERO -->
     <section class="hero">
@@ -396,35 +398,75 @@
             });
         }
 
-        // THEME SWITCHER - EVERY 3-5 SECONDS
-        function themeGlitchCycle() {
-            const body = document.body;
-            const themeLabel = document.querySelector('.theme-label');
+        // THEME SYSTEM: auto -> dark -> light -> cycling
+        const MODES = ['auto', 'dark', 'light', 'cycling'];
+        let currentMode = 'auto';
+        let cyclingTimer = null;
+        const themeLabel = document.querySelector('.theme-label');
 
-            function switchTheme() {
-                const nextSwitch = 3000 + Math.random() * 2000;
+        function getAutoTheme() {
+            const hour = new Date().getHours();
+            return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+        }
 
-                if (body.classList.contains('dark')) {
-                    body.classList.remove('dark');
-                    body.classList.add('light');
-                    themeLabel.textContent = 'LIGHT MODE';
-                } else {
-                    body.classList.remove('light');
-                    body.classList.add('dark');
-                    themeLabel.textContent = 'DARK MODE';
-                }
+        function applyTheme(theme) {
+            document.body.classList.remove('dark', 'light');
+            document.body.classList.add(theme);
+        }
 
-                setTimeout(switchTheme, nextSwitch);
+        function updateLabel() {
+            const labels = {
+                auto: 'AUTO',
+                dark: 'DARK',
+                light: 'LIGHT',
+                cycling: 'CYCLING'
+            };
+            themeLabel.textContent = labels[currentMode];
+        }
+
+        function stopCycling() {
+            if (cyclingTimer) {
+                clearTimeout(cyclingTimer);
+                cyclingTimer = null;
             }
+        }
 
-            const initialDelay = 3000 + Math.random() * 2000;
-            setTimeout(switchTheme, initialDelay);
+        function startCycling() {
+            function cycle() {
+                const nextSwitch = 3000 + Math.random() * 2000;
+                const isDark = document.body.classList.contains('dark');
+                applyTheme(isDark ? 'light' : 'dark');
+                cyclingTimer = setTimeout(cycle, nextSwitch);
+            }
+            cycle();
+        }
+
+        function setMode(mode) {
+            stopCycling();
+            currentMode = mode;
+            updateLabel();
+
+            if (mode === 'auto') {
+                applyTheme(getAutoTheme());
+            } else if (mode === 'dark') {
+                applyTheme('dark');
+            } else if (mode === 'light') {
+                applyTheme('light');
+            } else if (mode === 'cycling') {
+                startCycling();
+            }
+        }
+
+        function cycleThemeMode() {
+            const idx = MODES.indexOf(currentMode);
+            const next = MODES[(idx + 1) % MODES.length];
+            setMode(next);
         }
 
         // INITIALIZE
         window.addEventListener('load', function() {
             glitchText();
-            themeGlitchCycle();
+            setMode('auto');
         });
     </script>
 </body>
