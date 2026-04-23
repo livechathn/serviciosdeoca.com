@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Servicios De Oca — Soluciones Tecnologicas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.6s ease, color 0.6s ease;
+        }
+
+        /* THEME STATES */
+        body.dark {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        body.light {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        /* THEME INDICATOR */
+        .theme-indicator {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: 1px solid;
+            transition: all 0.6s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark .theme-indicator {
+            border-color: #333;
+            background: rgba(0, 0, 0, 0.6);
+            color: #00ff00;
+        }
+
+        body.light .theme-indicator {
+            border-color: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.8);
+            color: #2563eb;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            transition: all 0.6s ease;
+        }
+
+        .tagline {
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            transition: opacity 0.6s ease;
+            margin-bottom: 10px;
+        }
+
+        .tagline-sub {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.35;
+            transition: opacity 0.6s ease;
+        }
+
+        body.dark .tagline { opacity: 0.5; }
+        body.light .tagline { opacity: 0.4; }
+        body.dark .tagline-sub { opacity: 0.35; }
+        body.light .tagline-sub { opacity: 0.3; }
+
+        /* SERVICES SECTION */
+        .services-section {
+            padding: 80px 20px 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 60px;
+            opacity: 0.5;
+            transition: opacity 0.6s ease;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            border: 1px solid;
+            padding: 40px 30px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        body.dark .service-card {
+            border-color: #333;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        body.light .service-card {
+            border-color: rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+        }
+
+        body.dark .service-card:hover {
+            border-color: var(--card-accent);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--card-glow);
+        }
+
+        body.light .service-card:hover {
+            border-color: var(--card-accent);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1), 0 0 30px var(--card-glow-light);
+        }
+
+        .service-icon {
+            font-size: 36px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .service-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            transition: color 0.4s ease;
+        }
+
+        .service-card:hover .service-title {
+            color: var(--card-accent);
+        }
+
+        .service-desc {
+            font-size: 12px;
+            line-height: 1.8;
+            opacity: 0.6;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card:hover .service-desc {
+            opacity: 0.85;
+        }
+
+        .service-tag {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 4px 12px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid;
+            transition: all 0.4s ease;
+        }
+
+        .service-tag.enterprise {
+            --tag-color: #2563eb;
+        }
+
+        .service-tag.ai {
+            --tag-color: #9d00ff;
+        }
+
+        .service-tag.infra {
+            --tag-color: #10b981;
+        }
+
+        .service-tag.security {
+            --tag-color: #ff6600;
+        }
+
+        body.dark .service-tag {
+            border-color: var(--tag-color);
+            color: var(--tag-color);
+        }
+
+        body.light .service-tag {
+            border-color: var(--tag-color);
+            color: var(--tag-color);
+        }
+
+        /* CARD ACCENT COLORS */
+        .service-card:nth-child(1) { --card-accent: #2563eb; --card-glow: rgba(37, 99, 235, 0.3); --card-glow-light: rgba(37, 99, 235, 0.15); }
+        .service-card:nth-child(2) { --card-accent: #9d00ff; --card-glow: rgba(157, 0, 255, 0.3); --card-glow-light: rgba(157, 0, 255, 0.15); }
+        .service-card:nth-child(3) { --card-accent: #00d4ff; --card-glow: rgba(0, 212, 255, 0.3); --card-glow-light: rgba(0, 212, 255, 0.15); }
+        .service-card:nth-child(4) { --card-accent: #ff6600; --card-glow: rgba(255, 102, 0, 0.3); --card-glow-light: rgba(255, 102, 0, 0.15); }
+        .service-card:nth-child(5) { --card-accent: #10b981; --card-glow: rgba(16, 185, 129, 0.3); --card-glow-light: rgba(16, 185, 129, 0.15); }
+        .service-card:nth-child(6) { --card-accent: #ff0066; --card-glow: rgba(255, 0, 102, 0.3); --card-glow-light: rgba(255, 0, 102, 0.15); }
+        .service-card:nth-child(7) { --card-accent: #2563eb; --card-glow: rgba(37, 99, 235, 0.3); --card-glow-light: rgba(37, 99, 235, 0.15); }
+        .service-card:nth-child(8) { --card-accent: #9d00ff; --card-glow: rgba(157, 0, 255, 0.3); --card-glow-light: rgba(157, 0, 255, 0.15); }
+
+        /* FOOTER */
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 11px;
+            letter-spacing: 2px;
+            opacity: 0.3;
+            text-transform: uppercase;
+            transition: all 0.6s ease;
+            border-top: 1px solid;
+        }
+
+        body.dark .footer {
+            border-color: #222;
+        }
+
+        body.light .footer {
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 28px;
+                letter-spacing: 5px;
+            }
+
+            .tagline {
+                font-size: 10px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-indicator {
+                top: 20px;
+                right: 20px;
+                font-size: 9px;
+                padding: 8px 16px;
+            }
+
+            .service-card {
+                padding: 30px 24px;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <!-- THEME INDICATOR -->
+    <div class="theme-indicator">&#9670; <span class="theme-label">DARK MODE</span></div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1 class="logo glitch-text" data-text="SERVICIOS DE OCA">SERVICIOS DE OCA</h1>
+        <p class="tagline">Soluciones Tecnologicas de Vanguardia</p>
+        <p class="tagline-sub">Honduras</p>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services-section">
+        <h2 class="section-title">Servicios</h2>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="service-icon">&#9881;</span>
+                <h3 class="service-title">Sistema Operativo Personalizado</h3>
+                <p class="service-desc">Sistemas operativos configurados a medida. Desde estaciones de trabajo hasta servidores de produccion con arquitectura reforzada.</p>
+                <span class="service-tag infra">Infraestructura</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9672;</span>
+                <h3 class="service-title">Ingenieria de LLM</h3>
+                <p class="service-desc">Modelos de lenguaje open source desplegados en infraestructura dedicada. Fine-tuning, optimizacion y despliegue adaptado a su operacion.</p>
+                <span class="service-tag ai">Inteligencia Artificial</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9671;</span>
+                <h3 class="service-title">Integracion Claude API</h3>
+                <p class="service-desc">Implementacion profesional con la API de Anthropic. Agentes autonomos, procesamiento de documentos y flujos de trabajo inteligentes.</p>
+                <span class="service-tag ai">Inteligencia Artificial</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9670;</span>
+                <h3 class="service-title">ChatGPT Enterprise</h3>
+                <p class="service-desc">Configuracion e integracion de ChatGPT para entornos corporativos. Conectado a sus sistemas internos bajo sus politicas de seguridad.</p>
+                <span class="service-tag enterprise">Enterprise</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9673;</span>
+                <h3 class="service-title">Motor de Busqueda Privado</h3>
+                <p class="service-desc">Motores de busqueda internos personalizados. Indexe su documentacion y datos corporativos con total privacidad.</p>
+                <span class="service-tag security">Privacidad</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9635;</span>
+                <h3 class="service-title">Arquitectura de Bases de Datos</h3>
+                <p class="service-desc">PostgreSQL, MariaDB, MongoDB y Oracle. Diseno de arquitectura distribuida con redundancia y alta disponibilidad.</p>
+                <span class="service-tag infra">Infraestructura</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9889;</span>
+                <h3 class="service-title">Computo GPU en la Nube</h3>
+                <p class="service-desc">Infraestructura GPU dedicada para entrenamiento de modelos, inferencia y procesamiento de cargas de trabajo intensivas.</p>
+                <span class="service-tag enterprise">Enterprise</span>
+            </div>
+
+            <div class="service-card">
+                <span class="service-icon">&#9670;</span>
+                <h3 class="service-title">Seguridad Zero Trust</h3>
+                <p class="service-desc">Arquitectura de red con verificacion continua. Tunnels cifrados, DNS seguro y segmentacion de acceso por identidad.</p>
+                <span class="service-tag security">Seguridad</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        &copy; 2025 Servicios De Oca &mdash; Honduras
+    </footer>
+
+    <script>
+        // GLITCH TEXT EFFECT
+        function glitchText() {
+            const glitchElements = document.querySelectorAll('.glitch-text');
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+            glitchElements.forEach(element => {
+                const originalText = element.getAttribute('data-text');
+
+                function randomGlitch() {
+                    const numChars = Math.floor(Math.random() * 3) + 1;
+                    const startPos = Math.floor(Math.random() * (originalText.length - numChars));
+
+                    let glitchedText = originalText.split('');
+
+                    for (let i = 0; i < numChars; i++) {
+                        const pos = startPos + i;
+                        if (pos < glitchedText.length && glitchedText[pos] !== ' ') {
+                            glitchedText[pos] = chars[Math.floor(Math.random() * chars.length)];
+                        }
+                    }
+
+                    element.textContent = glitchedText.join('');
+
+                    setTimeout(() => {
+                        element.textContent = originalText;
+                    }, 40 + Math.random() * 80);
+                }
+
+                setInterval(() => {
+                    if (Math.random() > 0.88) {
+                        randomGlitch();
+                    }
+                }, 200);
+            });
+        }
+
+        // THEME SWITCHER - EVERY 3-5 SECONDS
+        function themeGlitchCycle() {
+            const body = document.body;
+            const themeLabel = document.querySelector('.theme-label');
+
+            function switchTheme() {
+                const nextSwitch = 3000 + Math.random() * 2000;
+
+                if (body.classList.contains('dark')) {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    themeLabel.textContent = 'LIGHT MODE';
+                } else {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    themeLabel.textContent = 'DARK MODE';
+                }
+
+                setTimeout(switchTheme, nextSwitch);
+            }
+
+            const initialDelay = 3000 + Math.random() * 2000;
+            setTimeout(switchTheme, initialDelay);
+        }
+
+        // INITIALIZE
+        window.addEventListener('load', function() {
+            glitchText();
+            themeGlitchCycle();
+        });
+    </script>
+</body>
+</html>
