@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios De Oca · Aria</title>
+
+<!-- Auth-guard FIRST: depth 1 under docs/ → ../auth-guard.js -->
+<script src="../auth-guard.js"></script>
+
+<!-- store.js BEFORE any module that reads window.ImgStore. -->
+<script src="store.js?v=1"></script>
+
+<style>
+  :root {
+    --font-mono: 'Courier New', Courier, monospace;
+    --accent-purple: #9d00ff;
+    --accent-blue:   #2563eb;
+    --accent-green:  #10b981;
+    --accent-red:    #ff0066;
+    --accent-cyan:   #00d4ff;
+    --accent-orange: #ff6600;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    font-family: var(--font-mono);
+    transition: background 0.6s ease, color 0.6s ease;
+  }
+
+  /* ── THEME STATES (mirrors serviciosdeoca homepage) ───────────────────── */
+  body.dark  { background: #000000; color: #ffffff; }
+  body.light { background: #ffffff; color: #000000; }
+
+  /* CSS vars per theme */
+  body.dark  { --b-dim: #222; --b-mid: #333; --b-active: #555; --panel: rgba(255,255,255,0.02); --panel-2: rgba(255,255,255,0.04); --txt-dim: #888; --txt-ghost: #555; }
+  body.light { --b-dim: rgba(0,0,0,0.10); --b-mid: rgba(0,0,0,0.18); --b-active: rgba(0,0,0,0.32); --panel: rgba(0,0,0,0.02); --panel-2: rgba(0,0,0,0.04); --txt-dim: #666; --txt-ghost: #999; }
+
+  /* ── THEME INDICATOR (top-right diamond, same as homepage) ────────────── */
+  .theme-indicator {
+    position: fixed; top: 20px; right: 20px;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 8px 16px; border: 1px solid;
+    transition: all 0.6s ease; z-index: 100;
+    backdrop-filter: blur(10px);
+    cursor: pointer; user-select: none;
+  }
+  body.dark  .theme-indicator { border-color: #333; background: rgba(0,0,0,0.6);   color: #00ff00; }
+  body.light .theme-indicator { border-color: rgba(0,0,0,0.2); background: rgba(255,255,255,0.8); color: var(--accent-blue); }
+
+  /* ── SHELL ─────────────────────────────────────────────────────────────── */
+  .shell { height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+
+  /* ── HEADER ────────────────────────────────────────────────────────────── */
+  header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--b-dim);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .header-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .crumbs {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--txt-dim);
+  }
+  .crumbs a { color: var(--txt-dim); text-decoration: none; transition: color 0.2s; }
+  .crumbs a:hover { color: var(--accent-purple); }
+  .crumbs .sep { opacity: 0.4; margin: 0 6px; }
+  .crumbs .here { font-weight: bold; }
+  body.dark  .crumbs .here { color: #fff; }
+  body.light .crumbs .here { color: #000; }
+
+  .title {
+    font-size: 28px; font-weight: 300; letter-spacing: 8px;
+    text-transform: uppercase; line-height: 1;
+  }
+  .subtitle {
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--txt-dim); text-transform: lowercase;
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 18px;
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    margin-right: 110px; /* gutter for the theme indicator */
+  }
+  .header-right a {
+    color: var(--txt-dim); text-decoration: none; transition: color 0.2s;
+  }
+  .header-right a:hover { color: var(--accent-purple); }
+  #logout-link:hover { color: var(--accent-red); }
+
+  /* ── MAIN GRID ─────────────────────────────────────────────────────────── */
+  main {
+    display: grid;
+    grid-template-columns: 60fr 40fr;
+    min-height: 0; overflow: hidden;
+  }
+
+  /* ── IMAGE PANE ────────────────────────────────────────────────────────── */
+  #image-pane {
+    position: relative;
+    border-right: 1px solid var(--b-dim);
+    overflow-y: auto;
+    padding: 20px 24px 60px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--b-active) transparent;
+  }
+  #image-pane::-webkit-scrollbar { width: 6px; }
+  #image-pane::-webkit-scrollbar-thumb { background: var(--b-active); border-radius: 3px; }
+
+  .pane-title {
+    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--txt-dim); margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .pane-title .pane-mini {
+    font-size: 9px; letter-spacing: 1.5px;
+    color: var(--txt-ghost); text-transform: none;
+  }
+
+  #img-status-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .img-host-pill {
+    padding: 4px 10px; border: 1px solid var(--b-mid);
+    color: var(--txt-dim); background: transparent;
+    transition: all 0.2s;
+  }
+  .img-host-pill.alive {
+    color: var(--accent-green); border-color: var(--accent-green);
+  }
+  .img-host-pill.dead {
+    color: var(--accent-red); border-color: var(--accent-red);
+  }
+  .img-host-pill.cloud::after { content: ' ⏱'; opacity: 0.7; }
+
+  .img-section { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .img-label {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--txt-dim);
+  }
+  .img-input, .img-select, .img-textarea {
+    background: transparent;
+    border: 1px solid var(--b-mid);
+    color: inherit;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 9px 11px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  body.dark  .img-input, body.dark  .img-select, body.dark  .img-textarea { background: rgba(255,255,255,0.02); }
+  body.light .img-input, body.light .img-select, body.light .img-textarea { background: rgba(0,0,0,0.02); }
+  .img-input:focus, .img-select:focus, .img-textarea:focus {
+    border-color: var(--accent-purple);
+  }
+  .img-textarea { min-height: 64px; resize: vertical; line-height: 1.4; }
+
+  .img-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+
+  #img-latency-warn, #img-private-warn {
+    display: none;
+    padding: 10px 12px;
+    font-size: 10px; letter-spacing: 1px; line-height: 1.5;
+    margin-bottom: 14px;
+    border: 1px solid;
+  }
+  #img-latency-warn { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(157,0,255,0.06); }
+  #img-private-warn { border-color: var(--accent-cyan);   color: var(--accent-cyan);   background: rgba(0,212,255,0.06); }
+  #img-latency-warn.show, #img-private-warn.show { display: block; }
+
+  .img-generate-btn {
+    background: transparent;
+    border: 1px solid;
+    font-family: var(--font-mono);
+    font-size: 12px; letter-spacing: 4px; text-transform: uppercase;
+    padding: 13px 16px;
+    cursor: pointer; width: 100%;
+    margin-top: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: inherit;
+  }
+  body.dark  .img-generate-btn { border-color: #fff; }
+  body.light .img-generate-btn { border-color: #000; }
+  body.dark  .img-generate-btn:hover:not(:disabled) { background: #fff; color: #000; transform: translateY(-2px); }
+  body.light .img-generate-btn:hover:not(:disabled) { background: #000; color: #fff; transform: translateY(-2px); }
+  .img-generate-btn:disabled { opacity: 0.35; cursor: wait; }
+
+  .gallery-section { margin-top: 24px; }
+  .gallery-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--txt-dim); margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .gallery-label .hint {
+    color: var(--txt-ghost); text-transform: none;
+    letter-spacing: 1px; font-size: 9px;
+  }
+
+  #img-jobs { display: flex; flex-direction: column; gap: 12px; }
+  .img-job {
+    border: 1px solid var(--b-mid);
+    padding: 12px 14px;
+    font-size: 10px; color: var(--txt-dim);
+    display: flex; flex-direction: column; gap: 6px;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+  .img-job:hover { border-color: var(--accent-purple); }
+  body.dark  .img-job { background: rgba(255,255,255,0.02); }
+  body.light .img-job { background: rgba(0,0,0,0.015); }
+
+  .img-job .job-head {
+    display: flex; justify-content: space-between;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .img-job .job-head .job-id    { color: var(--accent-blue); }
+  .img-job .job-head .job-state { color: var(--accent-purple); }
+  .img-job .job-head .job-state.done   { color: var(--accent-green); }
+  .img-job .job-head .job-state.failed { color: var(--accent-red); }
+  .img-job .job-prompt { font-style: italic; line-height: 1.4; font-size: 11px; }
+  body.dark  .img-job .job-prompt { color: #ddd; }
+  body.light .img-job .job-prompt { color: #222; }
+  .img-job .job-img { max-width: 100%; margin-top: 4px; display: block; }
+
+  .empty-hint {
+    text-align: center; color: var(--txt-ghost);
+    font-size: 10px; letter-spacing: 2px; padding: 22px 0; text-transform: uppercase;
+  }
+
+  .store-footer {
+    border-top: 1px solid var(--b-dim);
+    padding-top: 12px; margin-top: 16px;
+    font-size: 10px; letter-spacing: 1.5px;
+    color: var(--txt-dim);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .store-footer a { text-decoration: none; }
+
+  /* ── CHAT PANE ─────────────────────────────────────────────────────────── */
+  #chat-pane {
+    display: flex; flex-direction: column;
+    overflow: hidden; min-height: 0;
+  }
+  #chat-header {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--b-dim);
+    display: flex; flex-direction: column; gap: 8px;
+    flex-shrink: 0;
+  }
+  .chat-header-row {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+  }
+  .chat-title {
+    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--txt-dim);
+  }
+  /* sar1a-only — host filter is redundant when there's only one host. */
+  #chat-host-filter { display: none; }
+  #chat-model-select {
+    background: transparent;
+    border: 1px solid var(--b-mid);
+    color: inherit;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 5px 8px;
+    letter-spacing: 1px;
+    cursor: pointer; flex: 1; min-width: 0;
+  }
+  body.dark  #chat-model-select { background: rgba(255,255,255,0.02); }
+  body.light #chat-model-select { background: rgba(0,0,0,0.02); }
+  #chat-model-select:focus { border-color: var(--accent-purple); outline: none; }
+
+  #chat-host-badge {
+    font-size: 8px; padding: 4px 9px;
+    background: rgba(157,0,255,0.12); color: var(--accent-purple);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    border: 1px solid var(--accent-purple);
+  }
+  #chat-host-badge.offline {
+    background: rgba(255,0,102,0.12); color: var(--accent-red);
+    border-color: var(--accent-red);
+  }
+
+  #chat-output {
+    flex: 1; overflow-y: auto;
+    padding: 14px 16px;
+    font-size: 11px; line-height: 1.6;
+    scrollbar-width: thin; scrollbar-color: var(--b-active) transparent;
+  }
+  #chat-output::-webkit-scrollbar { width: 6px; }
+  #chat-output::-webkit-scrollbar-thumb { background: var(--b-active); }
+
+  .chat-msg {
+    margin-bottom: 10px; padding: 8px 12px;
+    border-left: 2px solid var(--b-mid);
+    word-wrap: break-word; white-space: pre-wrap;
+  }
+  .chat-msg.user      { border-left-color: var(--accent-blue); }
+  .chat-msg.assistant { border-left-color: var(--accent-purple); }
+  body.dark  .chat-msg.user      { color: var(--accent-cyan); }
+  body.light .chat-msg.user      { color: var(--accent-blue); }
+  body.dark  .chat-msg.assistant { color: #ddd; }
+  body.light .chat-msg.assistant { color: #111; }
+  .chat-msg.system {
+    border-left-color: var(--accent-orange);
+    color: var(--accent-orange);
+    font-size: 10px; opacity: 0.85;
+  }
+  .chat-msg .role-tag {
+    display: block; font-size: 8px; letter-spacing: 2px;
+    color: var(--txt-dim); margin-bottom: 4px; text-transform: uppercase;
+  }
+
+  #chat-input-line {
+    border-top: 1px solid var(--b-dim);
+    padding: 10px 14px;
+    display: flex; align-items: flex-end; gap: 8px;
+    flex-shrink: 0;
+  }
+  #chat-input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--b-mid);
+    color: inherit;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 8px 11px;
+    resize: none; min-height: 32px; max-height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  body.dark  #chat-input { background: rgba(255,255,255,0.02); }
+  body.light #chat-input { background: rgba(0,0,0,0.02); }
+  #chat-input:focus { border-color: var(--accent-purple); }
+
+  #chat-send {
+    background: transparent;
+    border: 1px solid var(--accent-purple);
+    color: var(--accent-purple);
+    font-family: var(--font-mono);
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 7px 14px;
+    cursor: pointer; transition: all 0.25s;
+  }
+  #chat-send:hover:not(:disabled) {
+    background: var(--accent-purple); color: #fff;
+  }
+  #chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* Manual reload button — next to model selectors. Replaces 10s auto-probe. */
+  .reload-btn {
+    background: transparent;
+    border: 1px solid var(--b-mid);
+    color: inherit;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .reload-btn:hover:not(:disabled) {
+    color: var(--accent-purple);
+    border-color: var(--accent-purple);
+  }
+  .reload-btn:disabled { opacity: 0.4; cursor: wait; }
+
+  /* ── MOBILE ────────────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    html, body { overflow: auto; }
+    .shell { height: auto; min-height: 100vh; }
+    main { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+    #image-pane { border-right: none; border-bottom: 1px solid var(--b-dim); }
+    #chat-pane { height: 70vh; }
+    .title { font-size: 22px; letter-spacing: 5px; }
+    .img-grid-2 { grid-template-columns: 1fr; }
+    .header-right { margin-right: 90px; }
+  }
+</style>
+</head>
+<body class="dark">
+
+<div class="theme-indicator" onclick="cycleThemeMode()">&#9670; <span class="theme-label">AUTO</span></div>
+
+<div class="shell">
+
+  <header>
+    <div class="header-row">
+      <div class="crumbs">
+        <a href="../">servicios de oca</a><span class="sep">/</span>
+        <span class="here">aria</span>
+      </div>
+      <div class="header-right">
+        <a href="../">home</a>
+        <a href="#" id="logout-link">salir</a>
+      </div>
+    </div>
+    <div class="header-row" style="align-items:flex-end;">
+      <div>
+        <div class="title">Aria</div>
+        <div class="subtitle">generación de imagen · inferencia llm · servicios de oca</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── IMAGE PANE ───────────────────────────────────────────────────── -->
+    <section id="image-pane">
+      <div class="pane-title">
+        <span>&#9672; imagen</span>
+        <span class="pane-mini">lunaDrawings · diffusion</span>
+      </div>
+
+      <div id="img-status-row" title="checkpoints alcanzables"></div>
+
+      <div id="img-private-warn">
+        &#9888; navegación privada detectada — las imágenes podrían no persistir.
+      </div>
+
+      <div class="img-section">
+        <div class="img-label">modelo · checkpoint</div>
+        <div style="display:flex;gap:8px;">
+          <select id="img-model" class="img-select" style="flex:1;min-width:0;"></select>
+          <button id="img-reload" class="reload-btn" type="button" title="recargar modelos">&#8635;</button>
+        </div>
+      </div>
+
+      <div class="img-section">
+        <div class="img-label">receta (preset)</div>
+        <select id="img-recipe" class="img-select"><option value="">— ninguna / libre —</option></select>
+      </div>
+
+      <div class="img-section">
+        <div class="img-label">prompt</div>
+        <textarea id="img-prompt" class="img-textarea" placeholder="sacerdotisa cyberpunk etérea, altar de neón, niebla volumétrica..."></textarea>
+      </div>
+
+      <div class="img-section">
+        <div class="img-label">prompt negativo (opcional)</div>
+        <textarea id="img-neg" class="img-textarea" style="min-height:44px" placeholder="borroso, baja calidad, marca de agua, deformado"></textarea>
+      </div>
+
+      <div class="img-grid-2">
+        <div class="img-section" style="margin-bottom:0;">
+          <div class="img-label">pasos</div>
+          <input id="img-steps" class="img-input" type="number" min="1" max="100" value="30">
+        </div>
+        <div class="img-section" style="margin-bottom:0;">
+          <div class="img-label">seed (-1 = aleatorio)</div>
+          <input id="img-seed" class="img-input" type="number" value="-1">
+        </div>
+      </div>
+
+      <div id="img-latency-warn">
+        &#9888; OBJETIVO NUBE — generación esperada <strong>20-30 min</strong>.
+        El trabajo correrá en <span id="img-warn-host">peer nube</span> y volverá
+        cuando esté listo. Puede abandonar la pestaña; el tile sigue actualizando.
+      </div>
+
+      <button id="img-generate" class="img-generate-btn">&#9205; generar</button>
+
+      <div class="gallery-section">
+        <div class="gallery-label">
+          <span>generaciones recientes</span>
+          <span class="hint">tap a un tile para reusar</span>
+        </div>
+        <div id="img-jobs">
+          <div class="empty-hint" id="empty-hint">— galería vacía —</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CHAT PANE ────────────────────────────────────────────────────── -->
+    <section id="chat-pane">
+      <div id="chat-header">
+        <div class="chat-header-row">
+          <span class="chat-title">&#9671; inferencia</span>
+          <span id="chat-host-badge">llm</span>
+        </div>
+        <div class="chat-header-row">
+          <select id="chat-host-filter" title="filtro orquestador" style="flex:0 0 auto;"></select>
+          <select id="chat-model-select" title="modelo" style="flex:1;min-width:0;"></select>
+          <button id="chat-reload" class="reload-btn" type="button" title="recargar modelos">&#8635;</button>
+        </div>
+      </div>
+      <div id="chat-output"></div>
+      <div id="chat-input-line">
+        <textarea id="chat-input" placeholder="mensaje... (Cmd+Enter para enviar)" rows="1"></textarea>
+        <button id="chat-send" type="button">&rarr; enviar</button>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// THEME — auto/dark/light/cycling (mirrors serviciosdeoca homepage)
+// ═══════════════════════════════════════════════════
+var THEME_MODES = ['auto', 'dark', 'light', 'cycling'];
+var themeCurrent = 'auto';
+var themeCyclingTimer = null;
+
+function getAutoTheme() {
+  var hour = new Date().getHours();
+  return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+}
+function applyTheme(t) {
+  document.body.classList.remove('dark', 'light');
+  document.body.classList.add(t);
+}
+function updateThemeLabel() {
+  var labels = { auto: 'AUTO', dark: 'DARK', light: 'LIGHT', cycling: 'CYCLING' };
+  var lbl = document.querySelector('.theme-label');
+  if (lbl) lbl.textContent = labels[themeCurrent];
+}
+function stopCycling() {
+  if (themeCyclingTimer) { clearTimeout(themeCyclingTimer); themeCyclingTimer = null; }
+}
+function startCycling() {
+  (function cycle() {
+    var next = 3000 + Math.random() * 2000;
+    var isDark = document.body.classList.contains('dark');
+    applyTheme(isDark ? 'light' : 'dark');
+    themeCyclingTimer = setTimeout(cycle, next);
+  })();
+}
+function setThemeMode(m) {
+  stopCycling();
+  themeCurrent = m;
+  localStorage.setItem('oca_theme_mode', m);
+  updateThemeLabel();
+  if (m === 'auto')         applyTheme(getAutoTheme());
+  else if (m === 'dark')    applyTheme('dark');
+  else if (m === 'light')   applyTheme('light');
+  else if (m === 'cycling') startCycling();
+}
+function cycleThemeMode() {
+  var idx = THEME_MODES.indexOf(themeCurrent);
+  setThemeMode(THEME_MODES[(idx + 1) % THEME_MODES.length]);
+}
+(function initTheme() {
+  var saved = localStorage.getItem('oca_theme_mode');
+  setThemeMode((saved && THEME_MODES.indexOf(saved) >= 0) ? saved : 'auto');
+})();
+
+// Logout: wipe oca_* and bounce to login.
+document.getElementById('logout-link').addEventListener('click', function (e) {
+  e.preventDefault();
+  sessionStorage.removeItem('oca_token');
+  sessionStorage.removeItem('oca_refresh');
+  sessionStorage.removeItem('oca_user');
+  var base = (location.pathname.match(/^(.*\/docs\/)/) || ['', '/'])[1];
+  window.location.replace(base + 'login/');
+});
+
+// Private-browsing detect
+(async function detectPrivate() {
+  try {
+    if (!navigator.storage || !navigator.storage.estimate) return;
+    var est = await navigator.storage.estimate();
+    if (est.quota && est.quota < 120 * 1024 * 1024) {
+      document.getElementById('img-private-warn').classList.add('show');
+    }
+  } catch (_) {}
+})();
+
+// ═══════════════════════════════════════════════════
+// SESSION REFRESH
+// ═══════════════════════════════════════════════════
+const SAR1A_URL = 'https://sar1a.lempyra.com';
+const CLIENT_ID = 'portal';
+
+async function refreshSession() {
+  const refreshToken = sessionStorage.getItem('oca_refresh');
+  if (!refreshToken) return false;
+  try {
+    const res = await fetch(`${SAR1A_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_type:    'refresh_token',
+        refresh_token: refreshToken,
+        client_id:     CLIENT_ID,
+      }),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (!data.access_token) return false;
+    sessionStorage.setItem('oca_token', data.access_token);
+    if (data.refresh_token) sessionStorage.setItem('oca_refresh', data.refresh_token);
+    console.log('[oca.aria] session refreshed via sar1a');
+    return true;
+  } catch (e) {
+    console.warn('[oca.aria] refresh failed:', e);
+    return false;
+  }
+}
+
+setInterval(async () => {
+  const tok = sessionStorage.getItem('oca_token');
+  if (!tok) return;
+  try {
+    const p = JSON.parse(atob(tok.split('.')[1]));
+    if (!p.exp) return;
+    const remaining = p.exp - Date.now()/1000;
+    if (remaining < 300 && remaining > 0) {
+      await refreshSession();
+    } else if (remaining <= 0) {
+      sessionStorage.removeItem('oca_token');
+      const base = (location.pathname.match(/^(.*\/docs\/)/) || ['', '/'])[1];
+      window.location.replace(base + 'login/');
+    }
+  } catch (_) {}
+}, 60000);
+
+// ═══════════════════════════════════════════════════
+// IMAGE MODULE
+// ═══════════════════════════════════════════════════
+(function () {
+  const HOST_PROXY = { url: SAR1A_URL, label: 'sar1a', kind: 'orch', lan: false };
+  const STORAGE_IMG_MODEL = 'oca_img_model';
+  const PROBE_TIMEOUT = 2500;
+  const POLL_INTERVAL = 5000;
+  const ACTIVE_JOBS_KEY = 'oca_img_jobs';
+
+  function loadActiveJobs() {
+    try { return JSON.parse(localStorage.getItem(ACTIVE_JOBS_KEY) || '[]'); }
+    catch (_) { return []; }
+  }
+  function saveActiveJobs(jobs) {
+    try { localStorage.setItem(ACTIVE_JOBS_KEY, JSON.stringify(jobs)); } catch (_) {}
+  }
+  function rememberJob(rec) {
+    const jobs = loadActiveJobs().filter(j => j.job_id !== rec.job_id);
+    jobs.unshift(rec);
+    saveActiveJobs(jobs.slice(0, 20));
+  }
+  function forgetJob(jobId) {
+    saveActiveJobs(loadActiveJobs().filter(j => j.job_id !== jobId));
+  }
+
+  const elStatus   = document.getElementById('img-status-row');
+  const elModel    = document.getElementById('img-model');
+  const elRecipe   = document.getElementById('img-recipe');
+  const elPrompt   = document.getElementById('img-prompt');
+  const elNeg      = document.getElementById('img-neg');
+  const elSteps    = document.getElementById('img-steps');
+  const elSeed     = document.getElementById('img-seed');
+  const elGen      = document.getElementById('img-generate');
+  const elJobs     = document.getElementById('img-jobs');
+  const elWarn     = document.getElementById('img-latency-warn');
+  const elWarnHost = document.getElementById('img-warn-host');
+  const elEmpty    = document.getElementById('empty-hint');
+
+  const modelMap   = new Map();
+  const recipes    = [];
+  let activeHosts  = [];
+  let mode         = 'unknown';
+
+  const path = {
+    models:   h => h.kind === 'orch' ? '/img/v1/models'      : '/v1/models',
+    generate: h => h.kind === 'orch' ? '/img/v1/generate'    : '/v1/generate',
+    job:      (h, id) => h.kind === 'orch' ? `/img/v1/jobs/${id}` : `/v1/jobs/${id}`,
+    image:    (h, f)  => h.kind === 'orch' ? `/img/outputs/${f}`  : `/outputs/${f}`,
+    recipes:  h => h.kind === 'orch' ? '/img/v1/recipes'     : '/v1/recipes',
+  };
+  function authHeaders(h) {
+    if (h.label !== 'sar1a') return {};
+    const tok = sessionStorage.getItem('oca_token');
+    return tok ? { 'Authorization': `Bearer ${tok}` } : {};
+  }
+  function normalizeCheckpoints(host, json) {
+    if (host.kind === 'orch') return json.all || [];
+    return json.checkpoints || [];
+  }
+
+  async function fetchWithRefresh(url, init, host) {
+    let r = await fetch(url, init);
+    if (r.status === 401 && host.label === 'sar1a') {
+      const ok = await refreshSession().catch(() => false);
+      if (ok) {
+        const newInit = { ...init, headers: { ...(init && init.headers), ...authHeaders(host) } };
+        r = await fetch(url, newInit);
+      }
+    }
+    return r;
+  }
+
+  async function probeHost(h) {
+    try {
+      const r = await fetch(h.url + path.models(h), {
+        headers: authHeaders(h),
+        signal: AbortSignal.timeout(PROBE_TIMEOUT),
+      });
+      if (!r.ok) return { host: h, ok: false, err: `HTTP ${r.status}` };
+      return { host: h, ok: true, ids: normalizeCheckpoints(h, await r.json()) };
+    } catch (e) {
+      return { host: h, ok: false, err: e.name === 'TimeoutError' ? 'timeout' : e.message };
+    }
+  }
+
+  function renderStatusRow() {
+    elStatus.innerHTML = '';
+    const h = HOST_PROXY;
+    const live = activeHosts.find(a => a.host.label === h.label);
+    const pill = document.createElement('span');
+    pill.className = 'img-host-pill ' + (live ? 'alive' : 'dead') + ' cloud';
+    pill.textContent = h.label + (live ? ` · ${live.ids.length}` : ' · —');
+    pill.title = live ? `${live.ids.length} checkpoints via sar1a` : 'sar1a inalcanzable';
+    elStatus.appendChild(pill);
+  }
+
+  function rebuildModelDropdown() {
+    const prev = elModel.value || localStorage.getItem(STORAGE_IMG_MODEL);
+    elModel.innerHTML = '';
+    if (!modelMap.size) {
+      const o = document.createElement('option');
+      o.value = ''; o.textContent = '— sar1a inalcanzable —';
+      elModel.appendChild(o);
+      elGen.disabled = true;
+      updateLatencyWarning();
+      return;
+    }
+    elGen.disabled = false;
+    const ids = [...modelMap.keys()].sort();
+    for (const id of ids) {
+      const h = modelMap.get(id);
+      const o = document.createElement('option');
+      o.value = id;
+      o.textContent = `${id} · ${h.label}`;
+      elModel.appendChild(o);
+    }
+    if (prev && modelMap.has(prev)) elModel.value = prev;
+    updateLatencyWarning();
+  }
+
+  function updateLatencyWarning() {
+    const id = elModel.value;
+    if (!id) { elWarn.classList.remove('show'); return; }
+    const h = modelMap.get(id);
+    if (h && !h.lan) {
+      elWarn.classList.add('show');
+      elWarnHost.textContent = h.label;
+    } else {
+      elWarn.classList.remove('show');
+    }
+  }
+  elModel.addEventListener('change', () => {
+    localStorage.setItem(STORAGE_IMG_MODEL, elModel.value);
+    updateLatencyWarning();
+  });
+
+  async function loadRecipes(host) {
+    try {
+      const r = await fetchWithRefresh(
+        host.url + path.recipes(host),
+        { headers: authHeaders(host), signal: AbortSignal.timeout(PROBE_TIMEOUT) },
+        host,
+      );
+      if (!r.ok) return;
+      const list = await r.json();
+      if (!Array.isArray(list)) return;
+      recipes.length = 0;
+      recipes.push(...list);
+      while (elRecipe.options.length > 1) elRecipe.remove(1);
+      for (const rec of recipes) {
+        const o = document.createElement('option');
+        o.value = rec.name;
+        o.textContent = rec.name;
+        elRecipe.appendChild(o);
+      }
+    } catch (_) {}
+  }
+
+  elRecipe.addEventListener('change', () => {
+    const r = recipes.find(x => x.name === elRecipe.value);
+    if (!r) return;
+    if (r.prompt)   elPrompt.value = r.prompt;
+    if (r.negative) elNeg.value    = r.negative;
+    if (r.steps)    elSteps.value  = r.steps;
+    if (r.model && modelMap.has(r.model)) {
+      elModel.value = r.model;
+      updateLatencyWarning();
+    }
+  });
+
+  async function probeAll() {
+    modelMap.clear();
+    activeHosts = [];
+    const proxy = await probeHost(HOST_PROXY);
+    if (proxy.ok) {
+      mode = 'via-sar1a';
+      for (const id of proxy.ids) modelMap.set(id, HOST_PROXY);
+      activeHosts.push(proxy);
+    } else {
+      mode = 'offline';
+    }
+    renderStatusRow();
+    rebuildModelDropdown();
+    if (activeHosts[0]) loadRecipes(activeHosts[0].host);
+    console.log(`[oca.img] mode=${mode} models=${modelMap.size}`);
+  }
+
+  function hideEmptyIfNeeded() {
+    if (elEmpty && elJobs.children.length > 1) elEmpty.style.display = 'none';
+    else if (elEmpty && elJobs.children.length <= 1) elEmpty.style.display = '';
+  }
+
+  function jobTile(job, host) {
+    const div = document.createElement('div');
+    div.className = 'img-job';
+    div.dataset.jobId = job.job_id;
+    div.dataset.hostLabel = host.label;
+    div.innerHTML = `
+      <div class="job-head">
+        <span class="job-id">${job.job_id.slice(0, 8)} · ${host.label}</span>
+        <span class="job-state">${job.status}</span>
+      </div>
+      <div class="job-prompt"></div>
+    `;
+    return div;
+  }
+  function updateJobTile(div, job, host) {
+    const stateEl = div.querySelector('.job-state');
+    stateEl.textContent = job.status;
+    stateEl.classList.toggle('done', job.status === 'done');
+    stateEl.classList.toggle('failed', job.status === 'failed');
+    if (job.status === 'done' && job.images && job.images.length && !div.dataset.fetched) {
+      div.dataset.fetched = '1';
+      fetchAndPersist(div, job, host).catch(e => console.warn('img persist failed', e));
+    }
+    if (job.error) {
+      const err = div.querySelector('.job-prompt');
+      err.textContent = '✗ ' + job.error;
+      err.style.color = 'var(--accent-red)';
+    }
+  }
+
+  async function fetchAndPersist(div, job, host) {
+    const fetched = [];
+    for (const f of job.images) {
+      try {
+        const r = await fetchWithRefresh(
+          host.url + path.image(host, f),
+          { headers: authHeaders(host) },
+          host,
+        );
+        if (!r.ok) {
+          appendErrorLine(div, `${f} → HTTP ${r.status}`);
+          continue;
+        }
+        const blob = await r.blob();
+        appendImage(div, blob);
+        fetched.push({ filename: f, blob, mimeType: blob.type, byte_size: blob.size });
+      } catch (e) {
+        appendErrorLine(div, `${f} → ${e.message}`);
+      }
+    }
+    if (fetched.length && window.ImgStore) {
+      const meta = JSON.parse(div.dataset.meta || '{}');
+      try {
+        const rec = {
+          id:          job.job_id,
+          ts:          Date.now(),
+          prompt:      meta.prompt || '',
+          negative:    meta.negative || '',
+          model:       meta.model || '',
+          recipe:      meta.recipe || null,
+          hostLabel:   host.label,
+          hostUrl:     host.url,
+          steps:       meta.steps,
+          seed:        meta.seed,
+          started_at:  meta.started_at || Date.now(),
+          finished_at: Date.now(),
+          images:      fetched,
+        };
+        await window.ImgStore.put(rec);
+        renderTileMeta(div, rec);
+        renderUsageFooter();
+      } catch (e) {
+        console.warn('ImgStore.put failed', e);
+      }
+    }
+  }
+
+  function appendImage(div, blob) {
+    const url = URL.createObjectURL(blob);
+    const img = document.createElement('img');
+    img.className = 'job-img';
+    img.src = url;
+    const obs = new MutationObserver(() => {
+      if (!div.isConnected) { URL.revokeObjectURL(url); obs.disconnect(); }
+    });
+    if (div.parentNode) obs.observe(div.parentNode, { childList: true });
+    div.appendChild(img);
+  }
+
+  function appendErrorLine(div, text) {
+    const line = document.createElement('div');
+    line.style.color = 'var(--accent-red)';
+    line.style.fontSize = '10px';
+    line.textContent = '✗ ' + text;
+    div.appendChild(line);
+  }
+
+  async function pollJob(host, jobId, tile) {
+    let backoff = POLL_INTERVAL;
+    while (true) {
+      try {
+        const r = await fetchWithRefresh(
+          host.url + path.job(host, jobId),
+          { headers: authHeaders(host) },
+          host,
+        );
+        if (r.ok) {
+          const job = await r.json();
+          updateJobTile(tile, job, host);
+          if (job.status === 'done' || job.status === 'failed') {
+            forgetJob(jobId);
+            return;
+          }
+          backoff = POLL_INTERVAL;
+        } else if (r.status === 404) {
+          backoff = Math.min(backoff * 1.5, 60000);
+          if (backoff >= 60000) {
+            tile.querySelector('.job-state').textContent = 'lost';
+            tile.querySelector('.job-state').classList.add('failed');
+            forgetJob(jobId);
+            return;
+          }
+        }
+      } catch (_) {}
+      await new Promise(res => setTimeout(res, backoff));
+    }
+  }
+
+  function reattachJobs() {
+    const jobs = loadActiveJobs();
+    for (const rec of jobs) {
+      const host = HOST_PROXY;
+      const tile = jobTile({ job_id: rec.job_id, status: 'reconnecting' }, host);
+      tile.querySelector('.job-prompt').textContent = (rec.prompt || '').slice(0, 200);
+      elJobs.appendChild(tile);
+      hideEmptyIfNeeded();
+      pollJob(host, rec.job_id, tile);
+    }
+  }
+
+  async function generate() {
+    const id = elModel.value;
+    if (!id) return;
+    const host = modelMap.get(id);
+    const promptText = elPrompt.value.trim();
+    if (!promptText && !elRecipe.value) {
+      alert('Indica un prompt o elige una receta.');
+      return;
+    }
+    const seed  = parseInt(elSeed.value, 10);
+    const steps = parseInt(elSteps.value, 10);
+    const body = {
+      model:    id,
+      prompt:   promptText || undefined,
+      negative: elNeg.value.trim() || undefined,
+      steps:    isNaN(steps) ? 30 : steps,
+      seed:     (isNaN(seed) || seed < 0) ? null : seed,
+    };
+    if (elRecipe.value) body.recipe = elRecipe.value;
+
+    elGen.disabled = true;
+    elGen.textContent = '⏳ enviando…';
+
+    try {
+      const r = await fetchWithRefresh(
+        host.url + path.generate(host),
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...authHeaders(host) },
+          body: JSON.stringify(body),
+        },
+        host,
+      );
+      if (!r.ok) throw new Error(`HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`);
+      const job = await r.json();
+      const tile = jobTile(job, host);
+      const promptForTile = promptText || `recipe:${body.recipe}`;
+      tile.querySelector('.job-prompt').textContent = promptForTile.slice(0, 200);
+      tile.dataset.meta = JSON.stringify({
+        prompt:     promptText,
+        negative:   body.negative || '',
+        model:      id,
+        recipe:     body.recipe || null,
+        steps:      body.steps,
+        seed:       body.seed,
+        started_at: Date.now(),
+      });
+      if (elEmpty) elEmpty.style.display = 'none';
+      elJobs.prepend(tile);
+      rememberJob({ job_id: job.job_id, host_label: host.label, prompt: promptForTile, started_at: Date.now() });
+      pollJob(host, job.job_id, tile);
+    } catch (e) {
+      const errTile = document.createElement('div');
+      errTile.className = 'img-job';
+      errTile.innerHTML = `<div class="job-head"><span class="job-id">submit failed</span><span class="job-state failed">error</span></div><div class="job-prompt">✗ ${e.message}</div>`;
+      if (elEmpty) elEmpty.style.display = 'none';
+      elJobs.prepend(errTile);
+    } finally {
+      elGen.disabled = false;
+      elGen.textContent = '⏵ generar';
+    }
+  }
+
+  elGen.addEventListener('click', generate);
+
+  function renderTileMeta(tile, rec) {
+    if (tile.querySelector('.img-job-meta')) return;
+    const meta = document.createElement('div');
+    meta.className = 'img-job-meta';
+    meta.style.cssText = 'font-size:9px;color:var(--txt-dim);line-height:1.4;display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px;';
+    const seedTxt = (rec.seed === null || rec.seed === undefined || rec.seed < 0) ? 'random' : rec.seed;
+    meta.innerHTML = `
+      <span title="modelo">⊙ ${rec.model || '—'}</span>
+      <span title="host">@ ${rec.hostLabel || '—'}</span>
+      <span title="pasos">⋮ ${rec.steps ?? '—'} pasos</span>
+      <span title="seed">⚄ seed ${seedTxt}</span>
+      ${rec.recipe ? `<span title="recipe" style="color:var(--accent-purple)">★ ${rec.recipe}</span>` : ''}
+    `;
+    tile.appendChild(meta);
+    if (rec.negative) {
+      const neg = document.createElement('div');
+      neg.style.cssText = 'font-size:9px;color:var(--accent-red);font-style:italic;line-height:1.3;';
+      neg.textContent = '¬ ' + rec.negative.slice(0, 200);
+      tile.appendChild(neg);
+    }
+    const restoreFn = () => {
+      elPrompt.value = rec.prompt || '';
+      elNeg.value    = rec.negative || '';
+      if (rec.steps != null) elSteps.value = rec.steps;
+      elSeed.value   = (rec.seed == null) ? -1 : rec.seed;
+      if (rec.model && modelMap.has(rec.model)) {
+        elModel.value = rec.model;
+        updateLatencyWarning();
+      }
+      if (rec.recipe) elRecipe.value = rec.recipe;
+      tile.style.boxShadow = '0 0 16px var(--accent-purple)';
+      setTimeout(() => { tile.style.boxShadow = ''; }, 700);
+      elPrompt.focus();
+    };
+    const promptEl = tile.querySelector('.job-prompt');
+    if (promptEl) {
+      promptEl.style.cursor = 'pointer';
+      promptEl.title = 'click para restaurar estos parámetros';
+      promptEl.addEventListener('click', restoreFn);
+    }
+    meta.style.cursor = 'pointer';
+    meta.title = 'click para restaurar estos parámetros';
+    meta.addEventListener('click', restoreFn);
+  }
+
+  async function hydrateFromStore() {
+    if (!window.ImgStore) return;
+    const records = await window.ImgStore.list({ limit: 100 });
+    for (const rec of records) {
+      if (elJobs.querySelector(`[data-job-id="${CSS.escape(rec.id)}"]`)) continue;
+      const tile = document.createElement('div');
+      tile.className = 'img-job';
+      tile.dataset.jobId = rec.id;
+      tile.innerHTML = `
+        <div class="job-head">
+          <span class="job-id">${rec.id.slice(0, 8)} · ${rec.hostLabel || '?'}</span>
+          <span class="job-state done">saved</span>
+        </div>
+        <div class="job-prompt">${(rec.prompt || '').slice(0, 200)}</div>
+      `;
+      renderTileMeta(tile, rec);
+      const full = await window.ImgStore.get(rec.id);
+      if (full && Array.isArray(full.images)) {
+        for (const im of full.images) {
+          if (!im.objectUrl) continue;
+          const img = document.createElement('img');
+          img.className = 'job-img';
+          img.src = im.objectUrl;
+          tile.appendChild(img);
+        }
+      }
+      const actions = document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:14px;margin-top:6px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;';
+      const delBtn = document.createElement('a');
+      delBtn.href = '#'; delBtn.textContent = '✕ borrar';
+      delBtn.style.color = 'var(--accent-red)';
+      delBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (full) full.images?.forEach(im => im.objectUrl && URL.revokeObjectURL(im.objectUrl));
+        await window.ImgStore.delete(rec.id);
+        tile.remove();
+        hideEmptyIfNeeded();
+        renderUsageFooter();
+      });
+      actions.appendChild(delBtn);
+      if (full && full.images && full.images[0] && full.images[0].objectUrl) {
+        const dl = document.createElement('a');
+        dl.href = full.images[0].objectUrl;
+        dl.download = full.images[0].filename;
+        dl.textContent = '⤓ descargar';
+        dl.style.color = 'var(--accent-blue)';
+        actions.appendChild(dl);
+      }
+      tile.appendChild(actions);
+      elJobs.appendChild(tile);
+    }
+    hideEmptyIfNeeded();
+    renderUsageFooter();
+  }
+
+  let footerEl = null;
+  async function renderUsageFooter() {
+    if (!window.ImgStore) return;
+    const u = await window.ImgStore.usage();
+    if (!footerEl) {
+      footerEl = document.createElement('div');
+      footerEl.className = 'store-footer';
+      document.getElementById('image-pane').appendChild(footerEl);
+    }
+    const total = window.Store ? await window.Store.totalUsage() : u;
+    const usedMb = total.bytes / (1024 * 1024);
+    const usedStr = usedMb >= 1024 ? `${(usedMb / 1024).toFixed(2)} GB` : `${usedMb.toFixed(1)} MB`;
+    const capGb   = (total.cap_bytes / (1024 * 1024 * 1024)).toFixed(2);
+    footerEl.innerHTML = `<span>${u.count} imágenes · ${usedStr} / ${capGb} GB cap</span>`;
+    const clear = document.createElement('a');
+    clear.href = '#'; clear.textContent = 'borrar todo';
+    clear.style.color = 'var(--accent-red)';
+    clear.style.cursor = 'pointer';
+    clear.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!confirm(`¿Borrar ${u.count} imágenes guardadas? (Los archivos del servidor no se ven afectados.)`)) return;
+      await window.ImgStore.clear();
+      elJobs.querySelectorAll('.img-job').forEach(t => {
+        if (t.dataset.jobId && t.querySelector('.job-state.done')) t.remove();
+      });
+      hideEmptyIfNeeded();
+      renderUsageFooter();
+    });
+    footerEl.appendChild(clear);
+  }
+
+  probeAll().then(hydrateFromStore).then(reattachJobs);
+
+  // Auto-reprobe disabled — manual reload only. 10s polling was hammering
+  // the orchestrator; user reloads via ↻ button when models seem stale.
+  const elImgReload = document.getElementById('img-reload');
+  if (elImgReload) {
+    elImgReload.addEventListener('click', () => {
+      elImgReload.disabled = true;
+      const orig = elImgReload.textContent;
+      elImgReload.textContent = '⟳';
+      Promise.resolve(probeAll()).finally(() => {
+        elImgReload.disabled = false;
+        elImgReload.textContent = orig;
+      });
+    });
+  }
+})();
+
+// ═══════════════════════════════════════════════════
+// CHAT MODULE
+// ═══════════════════════════════════════════════════
+(function() {
+  const PROXY_HOST = { url: SAR1A_URL + '/orch/v1', label: 'sar1a' };
+  const PROBE_TIMEOUT_MS = 2500;
+
+  const STORAGE_MODEL       = 'oca_chat_model';
+  const STORAGE_HOST_FILTER = 'oca_chat_host_filter';
+  const HISTORY_API_CAP = 40;
+  const HISTORY_UI_CAP  = 200;
+
+  const modelMap = new Map();
+  let perHost = {};
+  let mode = 'unknown';
+
+  const elOutput     = document.getElementById('chat-output');
+  const elInput      = document.getElementById('chat-input');
+  const elSend       = document.getElementById('chat-send');
+  const elModel      = document.getElementById('chat-model-select');
+  const elBadge      = document.getElementById('chat-host-badge');
+  const elHostFilter = document.getElementById('chat-host-filter');
+
+  const SYSTEM_MSG = { role: 'system', content: 'You are Aria, the Servicios De Oca research assistant. Be concise, helpful, and technically clear. Answer in the user\'s language.' };
+
+  const history = [{ ...SYSTEM_MSG }];
+
+  function uuid() {
+    if (crypto?.randomUUID) return crypto.randomUUID();
+    return 'm-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  }
+
+  async function persistUser(content, ts = Date.now()) {
+    if (!window.ChatUserStore) return;
+    try {
+      await window.ChatUserStore.put({ id: uuid(), ts, role: 'user', content });
+      renderChatFooter();
+    } catch (e) { console.warn('ChatUserStore.put failed', e); }
+  }
+  async function persistLLM(content, modelId, hostLabel, ts = Date.now()) {
+    if (!window.ChatLLMStore) return;
+    try {
+      await window.ChatLLMStore.put({
+        id: uuid(), ts, role: 'assistant',
+        content, model: modelId, host: hostLabel,
+      });
+      renderChatFooter();
+    } catch (e) { console.warn('ChatLLMStore.put failed', e); }
+  }
+
+  async function hydrateHistory() {
+    if (!window.ChatUserStore || !window.ChatLLMStore) return;
+    const [u, l] = await Promise.all([
+      window.ChatUserStore.list({ limit: HISTORY_UI_CAP }),
+      window.ChatLLMStore.list({ limit: HISTORY_UI_CAP }),
+    ]);
+    const merged = [...u, ...l].sort((a, b) => a.ts - b.ts);
+    const trimmed = merged.slice(-HISTORY_UI_CAP);
+    history.length = 1;
+    for (const m of trimmed) {
+      history.push({ role: m.role, content: m.content });
+      appendMsg(m.role, m.content, m.role === 'assistant' ? `${m.model || '?'} · ${m.host || '?'}` : null);
+    }
+  }
+
+  function appendMsg(role, text, modelHostHint = null) {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + role;
+    const tag = document.createElement('span');
+    tag.className = 'role-tag';
+    tag.textContent = role === 'assistant' ? 'aria' : role;
+    const body = document.createElement('span');
+    body.textContent = text;
+    div.appendChild(tag);
+    div.appendChild(body);
+    if (modelHostHint && role === 'assistant') {
+      const hint = document.createElement('div');
+      hint.className = 'msg-hint';
+      hint.style.cssText = 'font-size:8px;color:var(--txt-ghost);letter-spacing:1px;margin-top:2px;opacity:0.7;';
+      hint.textContent = modelHostHint;
+      div.appendChild(hint);
+    }
+    elOutput.appendChild(div);
+    elOutput.scrollTop = elOutput.scrollHeight;
+    return body;
+  }
+
+  let chatFooterEl = null;
+  async function renderChatFooter() {
+    if (!window.ChatUserStore || !window.ChatLLMStore) return;
+    if (!chatFooterEl) {
+      chatFooterEl = document.createElement('div');
+      chatFooterEl.style.cssText = 'border-top:1px solid var(--b-dim);padding:6px 16px;font-size:9px;letter-spacing:1px;color:var(--txt-dim);display:flex;justify-content:space-between;align-items:center;';
+      document.getElementById('chat-pane').appendChild(chatFooterEl);
+    }
+    const [uu, lu] = await Promise.all([window.ChatUserStore.usage(), window.ChatLLMStore.usage()]);
+    const totalMsgs = uu.count + lu.count;
+    const totalMb = ((uu.bytes + lu.bytes) / (1024 * 1024)).toFixed(2);
+    const capMb = ((uu.cap_bytes + lu.cap_bytes) / (1024 * 1024)).toFixed(0);
+    chatFooterEl.innerHTML = `<span>${totalMsgs} msgs · ${totalMb} MB / ${capMb} MB cap</span>`;
+    const clear = document.createElement('a');
+    clear.href = '#'; clear.textContent = 'borrar chat';
+    clear.style.color = 'var(--accent-red)';
+    clear.style.cursor = 'pointer';
+    clear.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!confirm(`¿Borrar los ${totalMsgs} mensajes almacenados?`)) return;
+      await window.ChatUserStore.clear();
+      await window.ChatLLMStore.clear();
+      elOutput.innerHTML = '';
+      history.length = 1;
+      renderChatFooter();
+    });
+    chatFooterEl.appendChild(clear);
+  }
+
+  function setBadge(state, text) {
+    elBadge.classList.toggle('offline', state === 'offline');
+    elBadge.textContent = text || 'llm';
+  }
+
+  function authHeadersForHost(host) {
+    if (host.label !== 'sar1a') return {};
+    const tok = sessionStorage.getItem('oca_token');
+    return tok ? { 'Authorization': `Bearer ${tok}` } : {};
+  }
+
+  async function fetchModelsFrom(host) {
+    try {
+      const res = await fetch(host.url + '/models', {
+        headers: authHeadersForHost(host),
+        signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+      });
+      if (!res.ok) return { host, ok: false, err: `HTTP ${res.status}` };
+      const data = await res.json();
+      const ids = (data.data || []).map(m => m.id);
+      return { host, ok: true, ids };
+    } catch (e) {
+      return { host, ok: false, err: e.name === 'TimeoutError' ? 'timeout' : e.message };
+    }
+  }
+
+  function rebuildHostFilter() {
+    const labels = Object.keys(perHost).sort();
+    const prev = elHostFilter.value || localStorage.getItem(STORAGE_HOST_FILTER) || 'ALL';
+    elHostFilter.innerHTML = '';
+    const all = document.createElement('option');
+    all.value = 'ALL';
+    all.textContent = `ALL · ${[...modelMap.keys()].length}`;
+    elHostFilter.appendChild(all);
+    for (const lbl of labels) {
+      const o = document.createElement('option');
+      o.value = lbl;
+      o.textContent = `${lbl} · ${perHost[lbl].size}`;
+      elHostFilter.appendChild(o);
+    }
+    elHostFilter.value = (prev === 'ALL' || perHost[prev]) ? prev : 'ALL';
+  }
+
+  function rebuildDropdown() {
+    const prev = elModel.value || localStorage.getItem(STORAGE_MODEL);
+    const filter = elHostFilter.value || 'ALL';
+    let ids;
+    if (filter === 'ALL') {
+      ids = [...modelMap.keys()].sort();
+    } else {
+      ids = [...(perHost[filter] || [])].sort();
+    }
+    elModel.innerHTML = '';
+    if (!ids.length) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '— no disponible —';
+      elModel.appendChild(opt);
+      return;
+    }
+    for (const id of ids) {
+      const host = modelMap.get(id);
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = filter === 'ALL' ? `${id} · ${host.label}` : id;
+      elModel.appendChild(opt);
+    }
+    if (prev && ids.includes(prev)) elModel.value = prev;
+  }
+
+  elHostFilter.addEventListener('change', () => {
+    localStorage.setItem(STORAGE_HOST_FILTER, elHostFilter.value);
+    rebuildDropdown();
+  });
+
+  async function loadModels() {
+    modelMap.clear();
+    perHost = {};
+    const proxy = await fetchModelsFrom(PROXY_HOST);
+    if (proxy.ok) {
+      perHost[PROXY_HOST.label] = new Set(proxy.ids);
+      for (const id of proxy.ids) modelMap.set(id, PROXY_HOST);
+      mode = 'via-sar1a';
+      setBadge('online', `sar1a · ${modelMap.size}`);
+      rebuildHostFilter();
+      rebuildDropdown();
+      console.log(`[oca.chat] mode=via-sar1a models=${modelMap.size}`);
+      return true;
+    }
+    mode = 'offline';
+    setBadge('offline', `offline · ${proxy.err || 'sar1a inalcanzable'}`);
+    rebuildHostFilter();
+    rebuildDropdown();
+    console.warn('[oca.chat] sar1a unreachable');
+    return false;
+  }
+
+  // Auto-reprobe disabled — manual reload only. Same reason as image side:
+  // 10s polling was hitting the orchestrator too hard. ↻ button reloads.
+  const elChatReload = document.getElementById('chat-reload');
+  if (elChatReload) {
+    elChatReload.addEventListener('click', () => {
+      elChatReload.disabled = true;
+      const orig = elChatReload.textContent;
+      elChatReload.textContent = '⟳';
+      Promise.resolve(loadModels()).finally(() => {
+        elChatReload.disabled = false;
+        elChatReload.textContent = orig;
+      });
+    });
+  }
+
+  elModel.addEventListener('change', () => {
+    localStorage.setItem(STORAGE_MODEL, elModel.value);
+  });
+
+  async function sendChat() {
+    const text = elInput.value.trim();
+    if (!text || !elModel.value) return;
+
+    const userTs = Date.now();
+    history.push({ role: 'user', content: text });
+    appendMsg('user', text);
+    elInput.value = '';
+    elInput.style.height = 'auto';
+
+    const replyEl = appendMsg('assistant', '', null);
+    let acc = '';
+    elSend.disabled = true;
+
+    const host = modelMap.get(elModel.value);
+    if (!host) {
+      replyEl.textContent = '[error: modelo sin host accesible — recarga la página]';
+      replyEl.parentElement.classList.add('system');
+      replyEl.parentElement.classList.remove('assistant');
+      history.pop();
+      elSend.disabled = false;
+      return;
+    }
+
+    persistUser(text, userTs);
+
+    try {
+      const sys = history[0];
+      const tail = history.slice(1).slice(-HISTORY_API_CAP);
+      const apiMessages = [sys, ...tail];
+
+      const doFetch = async () => fetch(host.url + '/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeadersForHost(host) },
+        body: JSON.stringify({
+          model: elModel.value,
+          messages: apiMessages,
+          stream: true,
+          temperature: 0.7,
+        }),
+      });
+      let res = await doFetch();
+      if (res.status === 401 && host.label === 'sar1a') {
+        const ok = await refreshSession().catch(() => false);
+        if (ok) res = await doFetch();
+      }
+      if (!res.ok) throw new Error('http ' + res.status);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data:')) continue;
+          const payload = trimmed.slice(5).trim();
+          if (payload === '[DONE]') continue;
+          try {
+            const chunk = JSON.parse(payload);
+            const delta = chunk.choices?.[0]?.delta?.content;
+            if (delta) {
+              acc += delta;
+              replyEl.textContent = acc;
+              elOutput.scrollTop = elOutput.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+
+      history.push({ role: 'assistant', content: acc });
+      if (acc) {
+        const hint = document.createElement('div');
+        hint.className = 'msg-hint';
+        hint.style.cssText = 'font-size:8px;color:var(--txt-ghost);letter-spacing:1px;margin-top:2px;opacity:0.7;';
+        hint.textContent = `${elModel.value} · ${host.label}`;
+        replyEl.parentElement.appendChild(hint);
+        persistLLM(acc, elModel.value, host.label);
+      }
+
+    } catch(e) {
+      replyEl.textContent = '[error: ' + e.message + ']';
+      replyEl.parentElement.classList.add('system');
+      replyEl.parentElement.classList.remove('assistant');
+      history.pop();
+    } finally {
+      elSend.disabled = false;
+      elInput.focus();
+    }
+  }
+
+  hydrateHistory().then(renderChatFooter);
+
+  elSend.addEventListener('click', sendChat);
+  elInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      sendChat();
+    }
+  });
+  elInput.addEventListener('input', () => {
+    elInput.style.height = 'auto';
+    elInput.style.height = Math.min(elInput.scrollHeight, 100) + 'px';
+  });
+
+  loadModels();
+})();
+</script>
+</body>
+</html>

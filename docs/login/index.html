@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://sar1a.lempyra.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;">
+    <title>Servicios De Oca — Aria · Acceso</title>
+    <meta name="theme-color" content="#000000">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.6s ease, color 0.6s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark  { background: #000000; color: #ffffff; }
+        body.light { background: #ffffff; color: #000000; }
+
+        /* THEME INDICATOR — diamond toggle, top-right, matches homepage */
+        .theme-indicator {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: 1px solid;
+            transition: all 0.6s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            user-select: none;
+        }
+        body.dark  .theme-indicator { border-color: #333; background: rgba(0,0,0,0.6); color: #00ff00; }
+        body.light .theme-indicator { border-color: rgba(0,0,0,0.2); background: rgba(255,255,255,0.8); color: #2563eb; }
+
+        /* HOME LINK */
+        .home-link {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: 1px solid;
+            transition: all 0.6s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            user-select: none;
+        }
+        body.dark  .home-link { border-color: #333; background: rgba(0,0,0,0.6); color: #ffffff; }
+        body.light .home-link { border-color: rgba(0,0,0,0.2); background: rgba(255,255,255,0.8); color: #000000; }
+        .home-link:hover { opacity: 0.7; }
+
+        /* HERO HEADER */
+        .hero {
+            padding: 80px 20px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            transition: all 0.6s ease;
+        }
+
+        .tagline {
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-bottom: 6px;
+        }
+
+        .tagline-sub {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.35;
+        }
+
+        body.dark  .tagline { opacity: 0.5; }
+        body.light .tagline { opacity: 0.4; }
+        body.dark  .tagline-sub { opacity: 0.35; }
+        body.light .tagline-sub { opacity: 0.3; }
+
+        /* LOGIN PANEL */
+        .login-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 460px;
+            padding: 50px 44px;
+            border: 1px solid;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        body.dark  .login-box { border-color: #333; background: rgba(0,0,0,0.4); }
+        body.light .login-box { border-color: rgba(0,0,0,0.12); background: rgba(255,255,255,0.6); }
+
+        .login-title {
+            font-size: 17px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.85;
+        }
+
+        .status-msg {
+            text-align: center;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            min-height: 14px;
+            transition: color 0.3s ease;
+        }
+        body.dark  .status-msg { color: #888; }
+        body.light .status-msg { color: #666; }
+
+        .form-group { margin-bottom: 24px; }
+
+        .form-label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            color: inherit;
+        }
+        body.dark  .form-input { border-bottom-color: #444; }
+        body.light .form-input { border-bottom-color: #ccc; }
+
+        .form-input:focus {
+            outline: none;
+            border-bottom-width: 2px;
+        }
+        body.dark  .form-input:focus { border-bottom-color: #ffffff; }
+        body.light .form-input:focus { border-bottom-color: #000000; }
+
+        .form-input::placeholder { opacity: 0.3; letter-spacing: 2px; }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .remember-row input { cursor: pointer; }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border: 1px solid;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: inherit;
+        }
+        body.dark  .login-button { border-color: #ffffff; }
+        body.light .login-button { border-color: #000000; }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+        body.dark  .login-button:hover { background: #ffffff; color: #000000; box-shadow: 0 8px 24px rgba(255,255,255,0.15); }
+        body.light .login-button:hover { background: #000000; color: #ffffff; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+        .login-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .login-button:disabled:hover { background: transparent; color: inherit; box-shadow: none; }
+
+        .login-button.success { border-color: #10b981; color: #10b981; }
+        .login-button.error   { border-color: #ff0066; color: #ff0066; }
+
+        .status-line {
+            margin-top: 28px;
+            padding-top: 22px;
+            border-top: 1px solid;
+            text-align: center;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.35;
+        }
+        body.dark  .status-line { border-top-color: #222; }
+        body.light .status-line { border-top-color: rgba(0,0,0,0.08); }
+
+        .access-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.4;
+            color: inherit;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        .access-link:hover { opacity: 0.8; }
+
+        /* FOOTER */
+        .footer {
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 11px;
+            letter-spacing: 2px;
+            opacity: 0.3;
+            text-transform: uppercase;
+            transition: all 0.6s ease;
+            border-top: 1px solid;
+        }
+        body.dark  .footer { border-color: #222; }
+        body.light .footer { border-color: rgba(0,0,0,0.08); }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 26px; letter-spacing: 5px; }
+            .tagline { font-size: 10px; }
+            .login-box { padding: 36px 26px; }
+            .theme-indicator, .home-link { top: 16px; font-size: 9px; padding: 8px 14px; }
+            .theme-indicator { right: 16px; }
+            .home-link { left: 16px; }
+            .hero { padding: 80px 20px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="../" class="home-link">&#9670; HOME</a>
+    <div class="theme-indicator" onclick="cycleThemeMode()">&#9670; <span class="theme-label">AUTO</span></div>
+
+    <section class="hero">
+        <h1 class="logo glitch-text" data-text="A.R.I.A.">A.R.I.A.</h1>
+        <p class="tagline">Automata Recursivo de Inteligencia Artificial</p>
+        <p class="tagline-sub">Acceso Seguro</p>
+    </section>
+
+    <div class="login-wrap">
+        <div class="login-box">
+            <div class="login-title glitch-text" data-text="[ Autenticación ]">[ Autenticación ]</div>
+            <div id="status-msg" class="status-msg">&#8635; Comprobando sar1a...</div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="username">Agente</label>
+                    <input type="text" id="username" name="username" class="form-input"
+                        placeholder="usuario" autocomplete="off" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Frase Secreta</label>
+                    <input type="password" id="password" name="password" class="form-input"
+                        placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="off" required>
+                </div>
+
+                <label class="remember-row">
+                    <input type="checkbox" id="remember">
+                    <span>Recordar este dispositivo</span>
+                </label>
+
+                <button type="submit" id="submit-btn" class="login-button">&rarr; Autenticar</button>
+
+                <div class="status-line">
+                    sar1a.lempyra.com &rarr; ClearingHouse &middot; TLS 1.3
+                </div>
+
+                <a href="#" class="access-link" onclick="alert('Contacto: @LempyraBot en Telegram'); return false;">Solicitar Acceso &rarr;</a>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2025 Servicios De Oca &mdash; Honduras
+    </footer>
+
+    <script>
+        // SITE_BASE — local/prod aware
+        // Local: /maniac/websites/serviciosdeoca.com/docs/login/ -> /maniac/.../docs/
+        // Prod:  /login/ -> /
+        var SITE_BASE = (location.pathname.match(/^(.*\/docs\/)/) || ['', '/'])[1];
+
+        var AUTH = {
+            url: 'https://sar1a.lempyra.com',
+            clientId: 'portal',
+            scope: 'payments,ink,profile',
+            tokenKey: 'oca_token',
+            refreshKey: 'oca_refresh',
+            userKey: 'oca_user'
+        };
+
+        // Skip if already authenticated
+        (function checkExistingSession() {
+            var token = sessionStorage.getItem(AUTH.tokenKey);
+            if (!token) return;
+            try {
+                var p = JSON.parse(atob(token.split('.')[1]));
+                if (!p.exp || p.exp > Date.now() / 1000) {
+                    window.location.replace('../aria/');
+                }
+            } catch(e) { sessionStorage.removeItem(AUTH.tokenKey); }
+        })();
+
+        // GATEWAY HEALTH
+        async function checkGateway() {
+            var msg = document.getElementById('status-msg');
+            try {
+                var res = await fetch(AUTH.url + '/auth/health', { signal: AbortSignal.timeout(5000) });
+                if (res.ok) {
+                    msg.style.color = '#10b981';
+                    msg.textContent = '● sar1a en línea';
+                    return;
+                }
+            } catch(e) {}
+            msg.style.color = '#ff0066';
+            msg.textContent = '✗ puerta de enlace fuera de servicio';
+            document.getElementById('submit-btn').disabled = true;
+        }
+
+        // OAUTH2 FLOW — via sar1aFrontDesk
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value;
+            var btn = document.getElementById('submit-btn');
+            var msg = document.getElementById('status-msg');
+
+            btn.disabled = true;
+            btn.classList.remove('success', 'error');
+            btn.textContent = '→ Autenticando...';
+            msg.style.color = '';
+            msg.textContent = '↻ Conectando con sar1a...';
+
+            try {
+                // Step 1: authorize
+                var authResp = await fetch(AUTH.url + '/auth/authorize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        client_id: AUTH.clientId,
+                        scope: AUTH.scope
+                    })
+                });
+
+                if (!authResp.ok) {
+                    var errData = await authResp.json().catch(function() { return {}; });
+                    if (authResp.status === 401 || authResp.status === 403) {
+                        throw new Error('credenciales inválidas');
+                    }
+                    throw new Error(errData.detail || 'autorización falló (' + authResp.status + ')');
+                }
+
+                var authData = await authResp.json();
+                var code = authData.code || authData.authorization_code;
+                if (!code) throw new Error('sin código de autorización');
+
+                msg.textContent = '↻ Intercambiando código...';
+
+                // Step 2: token
+                var tokenResp = await fetch(AUTH.url + '/auth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        grant_type: 'authorization_code',
+                        code: code,
+                        client_id: AUTH.clientId,
+                        client_secret: password
+                    })
+                });
+
+                if (!tokenResp.ok) {
+                    var tokErr = await tokenResp.json().catch(function() { return {}; });
+                    throw new Error(tokErr.detail || 'token falló (' + tokenResp.status + ')');
+                }
+
+                var tokenData = await tokenResp.json();
+                var accessToken = tokenData.access_token;
+                if (!accessToken) throw new Error('sin access_token en respuesta');
+
+                sessionStorage.setItem(AUTH.tokenKey, accessToken);
+                if (tokenData.refresh_token) sessionStorage.setItem(AUTH.refreshKey, tokenData.refresh_token);
+                sessionStorage.setItem(AUTH.userKey, username);
+
+                btn.classList.add('success');
+                btn.textContent = '✓ Autenticado';
+                msg.style.color = '#10b981';
+                msg.textContent = '✓ entrando a aria...';
+
+                setTimeout(function() { window.location.replace('../aria/'); }, 600);
+
+            } catch (err) {
+                btn.disabled = false;
+                btn.classList.add('error');
+                btn.textContent = '✗ Falló — Reintentar';
+                msg.style.color = '#ff0066';
+                msg.textContent = '✗ ' + (err.message || 'error de autenticación');
+                setTimeout(function() {
+                    btn.classList.remove('error');
+                    btn.textContent = '→ Autenticar';
+                }, 2500);
+            }
+        }
+
+        // GLITCH TEXT — copied from homepage
+        function glitchText() {
+            var glitchElements = document.querySelectorAll('.glitch-text');
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+            glitchElements.forEach(function(element) {
+                var originalText = element.getAttribute('data-text');
+
+                function randomGlitch() {
+                    var numChars = Math.floor(Math.random() * 3) + 1;
+                    var startPos = Math.floor(Math.random() * (originalText.length - numChars));
+                    var glitchedText = originalText.split('');
+
+                    for (var i = 0; i < numChars; i++) {
+                        var pos = startPos + i;
+                        if (pos < glitchedText.length && glitchedText[pos] !== ' ') {
+                            glitchedText[pos] = chars[Math.floor(Math.random() * chars.length)];
+                        }
+                    }
+
+                    element.textContent = glitchedText.join('');
+                    setTimeout(function() { element.textContent = originalText; }, 40 + Math.random() * 80);
+                }
+
+                setInterval(function() {
+                    if (Math.random() > 0.88) randomGlitch();
+                }, 200);
+            });
+        }
+
+        // THEME — auto -> dark -> light -> cycling (same as homepage)
+        var MODES = ['auto', 'dark', 'light', 'cycling'];
+        var currentMode = 'auto';
+        var cyclingTimer = null;
+        var themeLabel;
+
+        function getAutoTheme() {
+            var hour = new Date().getHours();
+            return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+        }
+
+        function applyTheme(theme) {
+            document.body.classList.remove('dark', 'light');
+            document.body.classList.add(theme);
+        }
+
+        function updateLabel() {
+            var labels = { auto: 'AUTO', dark: 'DARK', light: 'LIGHT', cycling: 'CYCLING' };
+            themeLabel.textContent = labels[currentMode];
+        }
+
+        function stopCycling() {
+            if (cyclingTimer) { clearTimeout(cyclingTimer); cyclingTimer = null; }
+        }
+
+        function startCycling() {
+            function cycle() {
+                var nextSwitch = 3000 + Math.random() * 2000;
+                var isDark = document.body.classList.contains('dark');
+                applyTheme(isDark ? 'light' : 'dark');
+                cyclingTimer = setTimeout(cycle, nextSwitch);
+            }
+            cycle();
+        }
+
+        function setMode(mode) {
+            stopCycling();
+            currentMode = mode;
+            updateLabel();
+            localStorage.setItem('oca_theme_mode', mode);
+
+            if (mode === 'auto')         applyTheme(getAutoTheme());
+            else if (mode === 'dark')    applyTheme('dark');
+            else if (mode === 'light')   applyTheme('light');
+            else if (mode === 'cycling') startCycling();
+        }
+
+        function cycleThemeMode() {
+            var idx = MODES.indexOf(currentMode);
+            setMode(MODES[(idx + 1) % MODES.length]);
+        }
+
+        window.addEventListener('load', function() {
+            themeLabel = document.querySelector('.theme-label');
+            var saved = localStorage.getItem('oca_theme_mode');
+            setMode((saved && MODES.indexOf(saved) >= 0) ? saved : 'auto');
+            glitchText();
+            checkGateway();
+        });
+    </script>
+</body>
+</html>

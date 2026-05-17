@@ -68,6 +68,41 @@
             color: #2563eb;
         }
 
+        /* ACCESS INDICATOR — mirrors theme-indicator, left side, links to /login/ */
+        .access-indicator {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: 1px solid;
+            transition: all 0.6s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            user-select: none;
+            display: inline-block;
+        }
+
+        body.dark .access-indicator {
+            border-color: #333;
+            background: rgba(0, 0, 0, 0.6);
+            color: #9d00ff;
+        }
+
+        body.light .access-indicator {
+            border-color: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.8);
+            color: #9d00ff;
+        }
+
+        .access-indicator:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(157, 0, 255, 0.25);
+        }
+
         /* HERO */
         .hero {
             min-height: 100vh;
@@ -286,6 +321,13 @@
                 padding: 8px 16px;
             }
 
+            .access-indicator {
+                top: 20px;
+                left: 20px;
+                font-size: 9px;
+                padding: 8px 16px;
+            }
+
             .service-card {
                 padding: 30px 24px;
             }
@@ -293,6 +335,9 @@
     </style>
 </head>
 <body>
+    <!-- ACCESS / LOGIN -->
+    <a href="login/" class="access-indicator">&#9670; Acceso</a>
+
     <!-- THEME INDICATOR -->
     <div class="theme-indicator" onclick="cycleThemeMode()">&#9670; <span class="theme-label">AUTO</span></div>
 
