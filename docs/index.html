@@ -2,16 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Servicios De Oca — Soluciones Tecnológicas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.R.I.A. — Servicios de Oca</title>
+    <meta name="description" content="A.R.I.A. por Servicios de Oca: acceso vitalicio a la edición comercial adquirida, consulta de personalización y arte en lempyra.com.">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+
     <meta property="og:title" content="Servicios De Oca — Soluciones Tecnológicas">
-    <meta property="og:description" content="Soluciones tecnológicas de vanguardia. Sistemas operativos, inteligencia artificial, ciberseguridad y más. Honduras.">
+    <meta property="og:description" content="A.R.I.A.: acceso vitalicio a la edición comercial adquirida, consulta de personalización y acceso a la colección de arte en Lempyrλ.">
     <meta property="og:image" content="https://serviciosdeoca.com/assets/og-image.jpg">
     <meta property="og:url" content="https://serviciosdeoca.com">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Servicios De Oca — Soluciones Tecnológicas">
-    <meta name="twitter:description" content="Soluciones tecnológicas de vanguardia. Honduras.">
+    <meta name="twitter:description" content="A.R.I.A.: acceso vitalicio, personalización y acceso a la colección de arte en Lempyrλ.">
     <meta name="twitter:image" content="https://serviciosdeoca.com/assets/og-image.jpg">
     <style>
         * {
@@ -68,7 +74,7 @@
             color: #2563eb;
         }
 
-        /* ACCESS INDICATOR — mirrors theme-indicator, left side, links to /login/ */
+        /* ACCESS INDICATOR — mirrors theme-indicator, left side, links to aria.serviciosdeoca.com */
         .access-indicator {
             position: fixed;
             top: 30px;
@@ -333,19 +339,75 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="assets/CODEX-oca-aria-v1.css">
 </head>
-<body>
-    <!-- ACCESS / LOGIN -->
-    <a href="login/" class="access-indicator">&#9670; Acceso</a>
+<body class="light">
+    <a href="https://aria.serviciosdeoca.com/" class="access-indicator">&#9670; Vista previa A.R.I.A. ↗</a>
 
     <!-- THEME INDICATOR -->
-    <div class="theme-indicator" onclick="cycleThemeMode()">&#9670; <span class="theme-label">AUTO</span></div>
+    <button type="button" class="theme-indicator" data-theme-toggle aria-label="Cambiar a tema oscuro" aria-pressed="false">&#9680; <span class="theme-label">CLARO</span></button>
 
     <!-- HERO -->
     <section class="hero">
         <h1 class="logo glitch-text" data-text="SERVICIOS DE OCA">SERVICIOS DE OCA</h1>
-        <p class="tagline">Soluciones Tecnológicas de Vanguardia</p>
-        <p class="tagline-sub">Honduras</p>
+        <p class="tagline">Una inteligencia. Dos mundos.</p>
+        <p class="tagline-sub">Creada en Honduras · Acceso + personalización + arte</p>
+        <p class="oca-intro">A.R.I.A. conecta una experiencia de inteligencia artificial con una pieza de su mundo visual. Una sola edición comercial, presentada con claridad.</p>
+        <div class="oca-actions"><a class="dae-button" href="#aria">Conocer A.R.I.A. ↓</a><a class="dae-button dae-secondary" href="#proyectos">Infraestructura privada ↗</a></div>
+    </section>
+
+    <main>
+    <section class="dae-plans aria-offer" id="aria" aria-labelledby="aria-heading">
+        <span class="anchor-alias" id="planes" aria-hidden="true"></span>
+        <header class="dae-heading">
+            <p class="dae-kicker">01 / Edición comercial</p>
+            <h2 id="aria-heading">Un acceso.<br>Dos mundos.</h2>
+            <p>A.R.I.A. reúne una experiencia de inteligencia artificial en Servicios de Oca y acceso a la colección de arte de su universo en Lempyrλ.</p>
+        </header>
+        <div class="aria-product">
+            <article class="aria-price-card">
+                <p class="dae-kicker">A.R.I.A. / Acceso vitalicio</p>
+                <p class="aria-price"><span>L 3,000</span><i>o</i><span>US$99</span></p>
+                <p class="dae-caption">Precios comerciales alternativos · pago único</p>
+                <p class="aria-price-note">No es una conversión de moneda. Se elige una de las dos alternativas al habilitar el pago.</p>
+                <ul class="aria-includes">
+                    <li><strong>Acceso A.R.I.A.</strong><span>Acceso vitalicio a la edición adquirida.</span></li>
+                    <li><strong>Consulta personal</strong><span>Una sesión para orientar su personalización.</span></li>
+                    <li><strong>Arte Lempyrλ</strong><span>Acceso a la colección de arte vinculada a la edición, después de la activación.</span></li>
+                </ul>
+                <div class="oca-actions aria-actions"><a class="dae-button" href="https://aria.serviciosdeoca.com/">Abrir vista previa ↗</a><a class="dae-button dae-secondary" href="https://lempyra.com/#world">Explorar el mundo ↗</a></div>
+            </article>
+            <aside class="aria-manifesto" aria-label="Dos mundos incluidos">
+                <p class="dae-kicker">Dos mundos / Una identidad</p>
+                <div><span>01</span><h3>Inteligencia</h3><p>La experiencia A.R.I.A. vive en Servicios de Oca.</p></div>
+                <div><span>02</span><h3>Arte</h3><p>La colección de arte se descubre en el universo de Lempyrλ.</p></div>
+            </aside>
+        </div>
+        <div class="aria-availability" role="note">
+            <p class="dae-kicker">Aperturas mensuales · edición limitada</p>
+            <p>Las aperturas se anuncian por edición. Este sitio no muestra inventario en tiempo real ni reserva un espacio.</p>
+        </div>
+        <section class="aria-preview" id="registro" aria-labelledby="register-heading">
+            <div class="aria-preview-copy"><p class="dae-kicker">Vista previa de registro</p><h3 id="register-heading">Revise sus datos.</h3><p>Esta demostración comprueba únicamente el formato. No envía, guarda, registra ni reserva información.</p></div>
+            <form data-registration-demo novalidate>
+                <label for="aria-email">Correo electrónico</label>
+                <input id="aria-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Su correo electrónico" required>
+                <label for="aria-phone">Teléfono de Honduras</label>
+                <div class="phone-field"><span aria-hidden="true">+504</span><input id="aria-phone" name="phone" type="tel" autocomplete="tel-national" inputmode="numeric" maxlength="8" pattern="[0-9]{8}" placeholder="00000000" aria-describedby="phone-help" required></div>
+                <small id="phone-help">Exactamente 8 dígitos después de +504. El formato no demuestra residencia ni verifica el número.</small>
+                <button class="dae-button" type="submit" disabled>Revisar formato (demo)</button>
+                <p class="form-status" data-form-status role="status" aria-live="polite">Nada se enviará. El registro, OTP y backend están pendientes.</p>
+            </form>
+        </section>
+        <section class="aria-payment" aria-labelledby="payment-heading">
+            <div><p class="dae-kicker">Pago / Activación</p><h3 id="payment-heading">Destinos aún no habilitados.</h3><p>El pago, la verificación por correo y teléfono, la activación del acceso y el desbloqueo del arte requieren el backend pendiente. Esta página no procesa pagos ni concede acceso.</p></div>
+            <ul><li><span>ETH / Bitcoin</span><strong>DIRECCIÓN PENDIENTE</strong></li><li><span>Monero</span><strong>FUTURA VARIANTE IA / BOT</strong></li><li><span>Tarjetas / PayPal</span><strong>OPCIÓN FUTURA</strong></li></ul>
+        </section>
+    </section>
+    <section class="oca-projects" id="proyectos">
+        <p class="dae-kicker">02 / Ingeniería a medida · Honduras</p><h2>La IA también puede<br>trabajar en su oficina.</h2>
+        <p>A.R.I.A. es una edición comercial definida. Automatización privada, centros de datos, sistemas locales e integraciones empresariales se diseñan como proyectos independientes según su alcance.</p>
+        <div class="oca-project-grid"><article><h3>Sobre su infraestructura</h3><p>Evaluamos equipos, sistemas y permisos antes de proponer automatización. Visitas, integraciones nuevas y trabajo físico se cotizan por proyecto.</p></article><article><h3>LLMs locales / On-premise</h3><p>Diseño de centros de datos e inferencia local con GPU. Hardware, modelos, capacidad y privacidad se dimensionan según la carga real; no forman parte de A.R.I.A.</p></article><article><h3>Implementaciones privadas</h3><p>Conozca las opciones de infraestructura y despliegue personalizado en Lempyrλ.</p><a href="https://lempyra.com/#deployments">Ver deployments ↗</a></article></div>
     </section>
 
     <!-- SERVICES -->
@@ -418,118 +480,12 @@
         </div>
     </section>
 
+    </main>
     <!-- FOOTER -->
     <footer class="footer">
-        &copy; 2025 Servicios De Oca &mdash; Honduras
+        &copy; 2026 Servicios de Oca &mdash; Honduras
     </footer>
 
-    <script>
-        // GLITCH TEXT EFFECT
-        function glitchText() {
-            const glitchElements = document.querySelectorAll('.glitch-text');
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-            glitchElements.forEach(element => {
-                const originalText = element.getAttribute('data-text');
-
-                function randomGlitch() {
-                    const numChars = Math.floor(Math.random() * 3) + 1;
-                    const startPos = Math.floor(Math.random() * (originalText.length - numChars));
-
-                    let glitchedText = originalText.split('');
-
-                    for (let i = 0; i < numChars; i++) {
-                        const pos = startPos + i;
-                        if (pos < glitchedText.length && glitchedText[pos] !== ' ') {
-                            glitchedText[pos] = chars[Math.floor(Math.random() * chars.length)];
-                        }
-                    }
-
-                    element.textContent = glitchedText.join('');
-
-                    setTimeout(() => {
-                        element.textContent = originalText;
-                    }, 40 + Math.random() * 80);
-                }
-
-                setInterval(() => {
-                    if (Math.random() > 0.88) {
-                        randomGlitch();
-                    }
-                }, 200);
-            });
-        }
-
-        // THEME SYSTEM: auto -> dark -> light -> cycling
-        const MODES = ['auto', 'dark', 'light', 'cycling'];
-        let currentMode = 'auto';
-        let cyclingTimer = null;
-        const themeLabel = document.querySelector('.theme-label');
-
-        function getAutoTheme() {
-            const hour = new Date().getHours();
-            return (hour >= 6 && hour < 18) ? 'light' : 'dark';
-        }
-
-        function applyTheme(theme) {
-            document.body.classList.remove('dark', 'light');
-            document.body.classList.add(theme);
-        }
-
-        function updateLabel() {
-            const labels = {
-                auto: 'AUTO',
-                dark: 'DARK',
-                light: 'LIGHT',
-                cycling: 'CYCLING'
-            };
-            themeLabel.textContent = labels[currentMode];
-        }
-
-        function stopCycling() {
-            if (cyclingTimer) {
-                clearTimeout(cyclingTimer);
-                cyclingTimer = null;
-            }
-        }
-
-        function startCycling() {
-            function cycle() {
-                const nextSwitch = 3000 + Math.random() * 2000;
-                const isDark = document.body.classList.contains('dark');
-                applyTheme(isDark ? 'light' : 'dark');
-                cyclingTimer = setTimeout(cycle, nextSwitch);
-            }
-            cycle();
-        }
-
-        function setMode(mode) {
-            stopCycling();
-            currentMode = mode;
-            updateLabel();
-
-            if (mode === 'auto') {
-                applyTheme(getAutoTheme());
-            } else if (mode === 'dark') {
-                applyTheme('dark');
-            } else if (mode === 'light') {
-                applyTheme('light');
-            } else if (mode === 'cycling') {
-                startCycling();
-            }
-        }
-
-        function cycleThemeMode() {
-            const idx = MODES.indexOf(currentMode);
-            const next = MODES[(idx + 1) % MODES.length];
-            setMode(next);
-        }
-
-        // INITIALIZE
-        window.addEventListener('load', function() {
-            glitchText();
-            setMode('auto');
-        });
-    </script>
+    <script src="assets/CODEX-oca-aria-v1.js" defer></script>
 </body>
 </html>
