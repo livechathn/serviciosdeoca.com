@@ -1,0 +1,67 @@
+/* Shared visual language, not an image filter. Generated artwork keeps its colors. */
+body, body.dark {
+  --paper: #000; --ink: #fff; --muted: #aaa; --line: #333; --soft: #101010;
+  --b-dim: #292929; --b-mid: #444; --b-active: #888;
+  --panel: #070707; --panel-2: #111; --txt-dim: #aaa; --txt-ghost: #888;
+  --btn-fg: #000; color-scheme: dark;
+}
+body.light {
+  --paper: #fff; --ink: #000; --muted: #555; --line: #ccc; --soft: #efefef;
+  --b-dim: #d6d6d6; --b-mid: #bbb; --b-active: #777;
+  --panel: #f8f8f8; --panel-2: #eee; --txt-dim: #555; --txt-ghost: #666;
+  --btn-fg: #fff; color-scheme: light;
+}
+body.dark, body.light {
+  --accent: var(--ink); --accent-purple: var(--ink); --accent-blue: var(--ink);
+  --accent-green: var(--ink); --accent-red: var(--ink); --accent-cyan: var(--ink); --accent-orange: var(--ink);
+  --accent-dim: var(--line); --accent-glow: transparent; --accent-faint: var(--soft);
+  --warn: var(--ink); --crit: var(--ink); --info: var(--ink);
+  background: var(--paper); color: var(--ink);
+  font-family: 'Courier New', Courier, monospace;
+  transition: background-color .18s ease, color .18s ease;
+}
+button, input, select, textarea { font: inherit; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+body.dark .theme-indicator, body.light .theme-indicator {
+  min-height: 44px; padding: 11px 16px; font-size: 11px; letter-spacing: 1px;
+  background: var(--ink); color: var(--paper); border: 1px solid var(--ink);
+  border-radius: 0; box-shadow: none; cursor: pointer;
+}
+body.dark .home-link, body.light .home-link {
+  min-height: 44px; border-radius: 0; background: var(--paper); color: var(--ink); border-color: var(--line);
+}
+body.dark .logo, body.light .logo, body.dark .title, body.light .title {
+  color: var(--ink); background: none; -webkit-text-fill-color: currentColor;
+  text-shadow: none; transition: color .18s ease; max-width: 100%; overflow-wrap: anywhere;
+}
+body.dark .cta-button, body.light .cta-button,
+body.dark .login-button, body.light .login-button,
+body.dark #chat-send, body.light #chat-send {
+  background: var(--ink); color: var(--paper); border: 1px solid var(--ink); border-radius: 0; box-shadow: none;
+}
+.cta-button:hover, .login-button:hover, #chat-send:hover { opacity: .8; }
+body.dark .gateway-pill, body.light .gateway-pill { color: var(--ink); border-color: var(--line); box-shadow: none; }
+.gateway-pill.dead { border-style: dashed; }
+.gateway-pill.alive { border-style: solid; }
+.tagline, .tagline-sub { color: var(--muted); opacity: 1 !important; }
+.cap, .login-box { border-color: var(--line) !important; background: var(--paper); box-shadow: none; }
+.manifesto { opacity: 1; color: var(--muted); }
+.capacities { gap: 0; }
+.cap { padding: 28px 22px; }
+.sophie-aria-app .shell header { background: var(--paper); }
+.sophie-aria-app .header-right { margin-right: 160px; }
+.sophie-aria-app #chat-header .chat-header-row { flex-wrap: wrap; }
+.sophie-aria-app main > section { min-width: 0; }
+.sophie-aria-app .title::after { display: none; }
+@media (max-width: 700px) {
+  body.dark .theme-indicator, body.light .theme-indicator { top: 16px; right: 16px; padding-inline: 10px; font-size: 10px; }
+  .home-link { top: 16px; left: 16px; padding: 12px 10px; max-width: 52vw; font-size: 9px; letter-spacing: 1px; }
+  .access-indicator { max-width: calc(100vw - 185px); }
+  .hero { padding-top: 112px; }
+  .sophie-aria-app .shell header { padding-top: 82px; }
+  .sophie-aria-app .header-right { margin-right: 0; }
+  .capacities { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
