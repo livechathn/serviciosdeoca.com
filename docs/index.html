@@ -342,6 +342,84 @@
     <link rel="stylesheet" href="assets/CODEX-oca-aria-v1.css">
     <link rel="stylesheet" href="assets/sophie-oca-nav-v1.css">
 <link rel="stylesheet" href="assets/sophie-monochrome-v1.css">
+<style>
+    /* Launch artwork is the sole color treatment on this page section. */
+    .mvp-news {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px 20px 92px;
+        scroll-margin-top: 110px;
+    }
+    .mvp-news .news-eyebrow {
+        margin-bottom: 18px;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+    .mvp-news-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 420px;
+        aspect-ratio: 1672 / 941;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: #000;
+        isolation: isolate;
+    }
+    .mvp-news-art,
+    .mvp-news-art::after,
+    .mvp-news-art img { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .mvp-news-art img { display: block; object-fit: cover; }
+    .mvp-news-art::after {
+        content: '';
+        background: linear-gradient(90deg, rgba(0, 0, 0, .8) 0%, rgba(0, 0, 0, .42) 42%, transparent 75%);
+    }
+    .mvp-news-copy {
+        position: relative;
+        z-index: 1;
+        width: min(55%, 570px);
+        padding: clamp(30px, 5vw, 74px);
+        color: #fff;
+    }
+    .mvp-news-copy time {
+        color: #ddd;
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+    .mvp-news-copy h2 {
+        margin: 22px 0 18px;
+        color: #fff;
+        font-size: clamp(28px, 3.7vw, 48px);
+        font-weight: 400;
+        letter-spacing: -1.5px;
+        line-height: 1.12;
+        overflow-wrap: anywhere;
+    }
+    .mvp-news-copy p { max-width: 37ch; color: #e2e2e2; font-size: 13px; line-height: 1.7; }
+    .mvp-news-copy a {
+        display: inline-block;
+        margin-top: 30px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #fff;
+        color: #fff;
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+    .mvp-news-copy a:hover { opacity: .72; }
+    .mvp-news-copy a:focus-visible { outline: 2px solid #fff; outline-offset: 5px; }
+    @media (max-width: 700px) {
+        .mvp-news { padding-bottom: 70px; }
+        .mvp-news-card { min-height: 490px; aspect-ratio: auto; align-items: flex-end; }
+        .mvp-news-art img { object-position: 68% center; }
+        .mvp-news-art::after { background: linear-gradient(0deg, rgba(0,0,0,.96), rgba(0,0,0,.62) 52%, rgba(0,0,0,.2)); }
+        .mvp-news-copy { width: 100%; padding: 32px 26px 38px; }
+    }
+</style>
 <script src="assets/sophie-theme-v2.js" defer></script>
 </head>
 <body class="dark">
@@ -369,6 +447,21 @@
     </section>
 
     <main>
+    <section class="mvp-news" id="noticias" aria-labelledby="mvp-news-title">
+        <p class="news-eyebrow">Noticias / Ouija V1.0 MVP</p>
+        <article class="mvp-news-card">
+            <div class="mvp-news-art" aria-hidden="true">
+                <img src="assets/sophie-ouija-mvp-v01.webp" alt="" width="1672" height="941" loading="lazy">
+            </div>
+            <div class="mvp-news-copy">
+                <time datetime="2026-10-05T20:50:00-06:00">5 de octubre de 2026 · 8:50 p. m. · Honduras</time>
+                <h2 id="mvp-news-title">Es hora de MVP</h2>
+                <p>Voz, inteligencia artificial y presencia en pantalla: Ouija entra oficialmente en su primera versión experimental.</p>
+                <a href="https://13ghosts.io/">Read more <span aria-hidden="true">↗</span></a>
+            </div>
+        </article>
+    </section>
+
     <section class="dae-plans aria-offer" id="aria" aria-labelledby="aria-heading">
         <span class="anchor-alias" id="planes" aria-hidden="true"></span>
         <header class="dae-heading">
