@@ -1,0 +1,19 @@
+/* Eleven: monochrome interface; violet belongs to her illustrated fairy. */
+.eleven-gallery {margin:0;}
+.eleven-gallery * {box-sizing:border-box;}
+.eleven-gallery .theme-indicator {position:fixed;top:24px;right:24px;z-index:10;}
+.eleven-intro,.eleven-page {max-width:1200px;margin:auto;padding:80px 24px;color:var(--ink);}
+.eleven-intro {display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:center;border-top:1px solid var(--line);}
+.eleven-label {font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
+.eleven-copy h2,.eleven-page h1 {font-size:clamp(30px,5vw,64px);line-height:1.1;letter-spacing:-2px;margin:0 0 28px;}
+.eleven-copy p,.eleven-page p {font-size:14px;line-height:1.8;max-width:65ch;margin-bottom:20px;}
+.eleven-intro img,.eleven-page img {display:block;width:100%;height:auto;background:#000;}
+.eleven-link,.eleven-page a {color:var(--ink);text-underline-offset:6px;}
+.eleven-link {display:inline-block;padding:16px 0;}
+.eleven-nav {display:flex;flex-wrap:wrap;gap:24px;margin-bottom:64px;padding-right:160px;}
+.eleven-page figure {margin:64px 0;}
+.eleven-page figcaption {padding:24px 0;border-bottom:1px solid var(--line);}
+.eleven-page h2 {font-size:22px;margin-bottom:12px;}
+.eleven-note {padding:24px;border:1px solid var(--line);margin-top:32px;}
+.eleven-page footer {border-top:1px solid var(--line);padding-top:32px;color:var(--muted);font-size:12px;}
+@media(max-width:760px) {.eleven-intro {grid-template-columns:1fr;padding:56px 20px;gap:28px;} .eleven-page {padding:32px 20px;} .eleven-nav {padding-right:0;margin-top:60px;} .eleven-page figure {margin:40px 0;}}
