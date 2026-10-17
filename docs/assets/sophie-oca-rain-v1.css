@@ -32,15 +32,14 @@ body { position: relative; isolation: isolate; }
 .hero { isolation: isolate; overflow: hidden; }
 .hero > :not(.oca-solar) { position: relative; z-index: 1; }
 .oca-solar {
-  position: absolute;
+  position: fixed;
   z-index: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(320px, 65vw, 760px);
-  aspect-ratio: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   pointer-events: none;
-  opacity: .46;
+  opacity: .32;
 }
 .oca-glyph-fireball { display: block; width: 100%; height: 100%; }
 .site-nav, .site-nav a, .section-title, .dae-heading h2, .oca-projects h2,
@@ -49,9 +48,16 @@ body { position: relative; isolation: isolate; }
 .logo::before, .logo::after { display: none !important; }
 .tagline { color: var(--accent-plum) !important; opacity: 1 !important; }
 .tagline-sub, .oca-intro, .service-desc, .dae-caption, .oca-budget-contact > p { color: var(--muted) !important; opacity: 1 !important; }
-.hero, .site-nav, .services-section, .footer, .dae-plans, .aria-product,
-.aria-manifesto, .aria-preview, .aria-payment, .oca-projects, .oca-budget-contact,
-.service-card, .aria-price-card { background: rgba(255,255,255,.94) !important; color: var(--ink) !important; }
+.hero, main, .services-section, .footer, .dae-plans, .aria-product,
+.aria-manifesto, .aria-preview, .aria-payment, .oca-projects,
+.aria-contact, .aria-faq, .aria-section {
+  background: transparent !important;
+  color: var(--ink) !important;
+}
+.site-nav, .oca-budget-contact, .service-card, .aria-price-card {
+  background: rgba(255,255,255,.86) !important;
+  color: var(--ink) !important;
+}
 .service-card, .aria-price-card, .oca-budget-contact { border-color: var(--line) !important; box-shadow: none !important; }
 .service-card:nth-child(odd) { --card-accent: var(--accent-red); }
 .service-card:nth-child(even) { --card-accent: var(--accent-plum); }
@@ -72,7 +78,7 @@ body { position: relative; isolation: isolate; }
   50% { --accent-red: #a10a65; --accent-plum: #60178e; }
   75% { --accent-red: #b82036; --accent-plum: #53245f; }
 }
-@media (max-width: 700px) { .oca-solar { width: 115vw; opacity: .3; } }
+@media (max-width: 700px) { .oca-solar { opacity: .25; } }
 @media (prefers-reduced-motion: reduce) {
   html { animation: none; }
 }

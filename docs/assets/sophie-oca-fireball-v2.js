@@ -11,7 +11,7 @@
   // Seeded placement avoids a different composition on every redraw.
   let seed = 7631;
   const random = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-  const particles = Array.from({ length: 540 }, () => ({
+  const particles = Array.from({ length: 900 }, () => ({
     angle: random() * Math.PI * 2,
     latitude: Math.acos(2 * random() - 1),
     radius: .26 + Math.pow(random(), .65) * .62,
@@ -20,11 +20,11 @@
     glyph: Math.floor(random() * alphabet.length),
     color: Math.floor(random() * colors.length)
   }));
-  let size = 0, frame = 0, last = -Infinity, elapsed = 0, previous = null;
+  let width = 0, height = 0, frame = 0, last = -Infinity, elapsed = 0, previous = null;
   let visible = true;
   const draw = t => {
-    ctx.clearRect(0, 0, size, size);
-    const unit = size * .43;
+    ctx.clearRect(0, 0, width, height);
+    const unit = Math.max(width, height) * .65;
     const projected = particles.map(p => {
       const a = p.angle + t * p.speed;
       // Circular swirl + radial breathing: no falling columns, no vertical drift.
@@ -39,9 +39,9 @@
     for (const { p, x, y, depth } of projected) {
       ctx.globalAlpha = .16 + depth * .72;
       ctx.fillStyle = colors[p.color];
-      ctx.font = `500 ${Math.max(8, size * (.011 + depth * .008))}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+      ctx.font = `500 ${Math.max(9, Math.min(19, Math.min(width, height) * (.013 + depth * .012)))}px ui-monospace, SFMono-Regular, Menlo, monospace`;
       ctx.save();
-      ctx.translate(size / 2 + x * unit, size / 2 + y * unit);
+      ctx.translate(width / 2 + x * unit, height / 2 + y * unit);
       ctx.rotate(.16 * Math.sin(t * .35 + p.phase));
       ctx.fillText(alphabet[(p.glyph + Math.floor(t * .35 + p.phase)) % alphabet.length], 0, 0);
       ctx.restore();
@@ -64,11 +64,13 @@
     else if (visible && !document.hidden) frame = requestAnimationFrame(tick);
   };
   const resize = () => {
-    size = canvas.getBoundingClientRect().width;
-    if (!size) return;
+    const bounds = canvas.getBoundingClientRect();
+    width = bounds.width;
+    height = bounds.height;
+    if (!width || !height) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(size * dpr);
-    canvas.height = Math.round(size * dpr);
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     draw(motion.matches ? 0 : elapsed);
   };
