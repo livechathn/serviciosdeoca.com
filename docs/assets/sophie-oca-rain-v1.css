@@ -1,12 +1,25 @@
-/* White-only Oca landing: scarlet and plum accents, with a contained sun/rain motif. */
+/* White-only Oca: slow scarlet / purple / reddish violet / original-red accents. */
+@property --accent-red {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #d1092b;
+}
+@property --accent-plum {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #53245f;
+}
+html {
+  --accent-red: #d1092b;
+  --accent-plum: #53245f;
+  animation: oca-accent-cycle 32s linear infinite;
+}
 html, body, body.dark, body.light {
   --paper: #fff;
   --ink: #27162f;
   --muted: #51465a;
   --line: #ded9e2;
   --soft: #f8f6f8;
-  --accent-red: #b82036;
-  --accent-plum: #53245f;
   --accent: var(--accent-red);
   background-color: #fff !important;
   color: var(--ink) !important;
@@ -21,33 +34,15 @@ body { position: relative; isolation: isolate; }
 .oca-solar {
   position: absolute;
   z-index: 0;
-  top: 13%;
-  right: clamp(24px, 12vw, 180px);
-  width: clamp(210px, 25vw, 320px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(320px, 65vw, 760px);
   aspect-ratio: 1;
   pointer-events: none;
-  opacity: .28;
+  opacity: .46;
 }
-.white-sun {
-  position: absolute;
-  inset: 23%;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff 0 58%, #faf7fb 68%, rgba(255,255,255,.25) 75%, transparent 76%);
-  box-shadow: 0 0 0 1px rgba(83,36,95,.19), 0 0 0 15px rgba(184,32,54,.035), 0 0 36px rgba(83,36,95,.11);
-}
-.rain-columns { position: absolute; inset: 0; overflow: hidden; }
-.rain-columns span {
-  position: absolute;
-  top: -25%;
-  color: var(--accent-red);
-  font: 11px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace;
-  text-align: center;
-  text-shadow: 0 0 7px rgba(184,32,54,.25);
-  animation: glyph-rain 7s linear infinite;
-}
-.rain-columns span:nth-child(1) { left: 30%; animation-delay: -1.5s; }
-.rain-columns span:nth-child(2) { left: 51%; color: var(--accent-plum); animation-delay: -4s; }
-.rain-columns span:nth-child(3) { left: 70%; animation-delay: -2.7s; }
+.oca-glyph-fireball { display: block; width: 100%; height: 100%; }
 .site-nav, .site-nav a, .section-title, .dae-heading h2, .oca-projects h2,
 .aria-budget-heading, .oca-budget-contact h2 { color: var(--accent-plum) !important; }
 .logo { color: var(--accent-red) !important; text-shadow: none !important; }
@@ -71,6 +66,13 @@ body { position: relative; isolation: isolate; }
 .oca-budget-contact > p { max-width: 58ch; margin-inline: auto; line-height: 1.8; }
 .oca-budget-contact .oca-contact-note { margin-top: 18px; font-size: 12px; }
 .mvp-news-card { box-shadow: none !important; }
-@keyframes glyph-rain { 0% { transform: translateY(0); opacity: 0; } 18% { opacity: .9; } 82% { opacity: .65; } 100% { transform: translateY(320px); opacity: 0; } }
-@media (max-width: 700px) { .oca-solar { top: 21%; right: 3%; width: 190px; opacity: .2; } }
-@media (prefers-reduced-motion: reduce) { .rain-columns span { animation: none; opacity: .55; } }
+@keyframes oca-accent-cycle {
+  0%, 100% { --accent-red: #d1092b; --accent-plum: #53245f; }
+  25% { --accent-red: #7025b6; --accent-plum: #a30b2a; }
+  50% { --accent-red: #a10a65; --accent-plum: #60178e; }
+  75% { --accent-red: #b82036; --accent-plum: #53245f; }
+}
+@media (max-width: 700px) { .oca-solar { width: 115vw; opacity: .3; } }
+@media (prefers-reduced-motion: reduce) {
+  html { animation: none; }
+}
