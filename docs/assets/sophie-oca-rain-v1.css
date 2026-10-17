@@ -1,0 +1,76 @@
+/* White-only Oca landing: scarlet and plum accents, with a contained sun/rain motif. */
+html, body, body.dark, body.light {
+  --paper: #fff;
+  --ink: #27162f;
+  --muted: #51465a;
+  --line: #ded9e2;
+  --soft: #f8f6f8;
+  --accent-red: #b82036;
+  --accent-plum: #53245f;
+  --accent: var(--accent-red);
+  background-color: #fff !important;
+  color: var(--ink) !important;
+  color-scheme: light;
+}
+body { position: relative; isolation: isolate; }
+.theme-indicator { display: none !important; }
+.hero, main, .footer { position: relative; z-index: 1; }
+.site-nav, .access-indicator { z-index: 100; }
+.hero { isolation: isolate; overflow: hidden; }
+.hero > :not(.oca-solar) { position: relative; z-index: 1; }
+.oca-solar {
+  position: absolute;
+  z-index: 0;
+  top: 13%;
+  right: clamp(24px, 12vw, 180px);
+  width: clamp(210px, 25vw, 320px);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: .28;
+}
+.white-sun {
+  position: absolute;
+  inset: 23%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 58%, #faf7fb 68%, rgba(255,255,255,.25) 75%, transparent 76%);
+  box-shadow: 0 0 0 1px rgba(83,36,95,.19), 0 0 0 15px rgba(184,32,54,.035), 0 0 36px rgba(83,36,95,.11);
+}
+.rain-columns { position: absolute; inset: 0; overflow: hidden; }
+.rain-columns span {
+  position: absolute;
+  top: -25%;
+  color: var(--accent-red);
+  font: 11px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-align: center;
+  text-shadow: 0 0 7px rgba(184,32,54,.25);
+  animation: glyph-rain 7s linear infinite;
+}
+.rain-columns span:nth-child(1) { left: 30%; animation-delay: -1.5s; }
+.rain-columns span:nth-child(2) { left: 51%; color: var(--accent-plum); animation-delay: -4s; }
+.rain-columns span:nth-child(3) { left: 70%; animation-delay: -2.7s; }
+.site-nav, .site-nav a, .section-title, .dae-heading h2, .oca-projects h2,
+.aria-budget-heading, .oca-budget-contact h2 { color: var(--accent-plum) !important; }
+.logo { color: var(--accent-red) !important; text-shadow: none !important; }
+.logo::before, .logo::after { display: none !important; }
+.tagline { color: var(--accent-plum) !important; opacity: 1 !important; }
+.tagline-sub, .oca-intro, .service-desc, .dae-caption, .oca-budget-contact > p { color: var(--muted) !important; opacity: 1 !important; }
+.hero, .site-nav, .services-section, .footer, .dae-plans, .aria-product,
+.aria-manifesto, .aria-preview, .aria-payment, .oca-projects, .oca-budget-contact,
+.service-card, .aria-price-card { background: rgba(255,255,255,.94) !important; color: var(--ink) !important; }
+.service-card, .aria-price-card, .oca-budget-contact { border-color: var(--line) !important; box-shadow: none !important; }
+.service-card:nth-child(odd) { --card-accent: var(--accent-red); }
+.service-card:nth-child(even) { --card-accent: var(--accent-plum); }
+.service-icon, .service-title, .dae-kicker, .aria-manifesto span { color: var(--accent-red) !important; }
+.service-tag { border-color: var(--accent-plum) !important; color: var(--accent-plum) !important; background: #fff !important; }
+.dae-button { border-color: var(--accent-red) !important; background: var(--accent-red) !important; color: #fff !important; }
+.dae-button.dae-secondary { border-color: var(--accent-plum) !important; background: #fff !important; color: var(--accent-plum) !important; }
+.dae-button:hover { filter: brightness(.92); }
+.aria-budget-heading { margin: 10px 0 14px; font-size: clamp(22px, 3vw, 34px); line-height: 1.2; }
+.oca-budget-contact { max-width: 1120px; margin: 0 auto 96px; padding: clamp(30px, 7vw, 76px); border: 1px solid var(--line); text-align: center; }
+.oca-budget-contact h2 { margin: 10px auto 16px; font-size: clamp(28px, 5vw, 48px); line-height: 1.12; }
+.oca-budget-contact > p { max-width: 58ch; margin-inline: auto; line-height: 1.8; }
+.oca-budget-contact .oca-contact-note { margin-top: 18px; font-size: 12px; }
+.mvp-news-card { box-shadow: none !important; }
+@keyframes glyph-rain { 0% { transform: translateY(0); opacity: 0; } 18% { opacity: .9; } 82% { opacity: .65; } 100% { transform: translateY(320px); opacity: 0; } }
+@media (max-width: 700px) { .oca-solar { top: 21%; right: 3%; width: 190px; opacity: .2; } }
+@media (prefers-reduced-motion: reduce) { .rain-columns span { animation: none; opacity: .55; } }
