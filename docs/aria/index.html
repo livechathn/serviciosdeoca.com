@@ -686,8 +686,10 @@ setInterval(async () => {
     return tok ? { 'Authorization': `Bearer ${tok}` } : {};
   }
   function normalizeCheckpoints(host, json) {
-    if (host.kind === 'orch') return json.all || [];
-    return json.checkpoints || [];
+    const ids = host.kind === 'orch' ? (json.all || []) : (json.checkpoints || []);
+    // Cyber Pony is served by the orch but intentionally hidden from this
+    // site's picker. Match any Pony checkpoint, including future versions.
+    return ids.filter(id => !/pony/i.test(id));
   }
 
   async function fetchWithRefresh(url, init, host) {
