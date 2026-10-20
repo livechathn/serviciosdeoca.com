@@ -423,7 +423,8 @@
 <script src="assets/sophie-theme-v2.js" defer></script>
 <link rel="stylesheet" href="assets/sophie-eleven-v1.css">
 <link rel="stylesheet" href="assets/sophie-oca-rain-v1.css?v=3">
-<link rel="stylesheet" href="assets/package-offers.css?v=20261019"><link rel="stylesheet" href="assets/aria-showcase/showcase.css?v=1"><script defer src="assets/aria-showcase/presence.js?v=1"></script></head>
+<link rel="stylesheet" href="assets/package-offers.css?v=20261019"><link rel="stylesheet" href="assets/aria-showcase/showcase.css?v=1"><script defer src="assets/aria-showcase/presence.js?v=1"></script><link rel="stylesheet" href="assets/contact.css?v=20261020-live1">
+</head>
 <body class="dark" data-presence="aria">
     <div class="oca-solar" aria-hidden="true"><canvas class="oca-glyph-fireball"></canvas></div>
     <a href="https://aria.serviciosdeoca.com/" class="access-indicator">&#9670; A.R.I.A. / Showcase ↗</a>
@@ -481,11 +482,11 @@
         <div class="oca-project-grid"><article><h3>Sobre su infraestructura</h3><p>Evaluamos equipos, sistemas y permisos antes de proponer automatización. Visitas, integraciones nuevas y trabajo físico se cotizan por proyecto.</p></article><article><h3>LLMs locales / On-premise</h3><p>Diseño de centros de datos e inferencia local con GPU. Hardware, modelos, capacidad y privacidad se dimensionan según la carga real y se cotizan aparte.</p></article><article><h3>Implementaciones privadas</h3><p>Conozca las opciones de infraestructura y despliegue personalizado en Lempyrλ.</p><a href="https://lempyra.com/#deployments">Ver deployments ↗</a></article></div>
     </section>
 
-    <section class="oca-budget-contact" id="budget-contact" aria-labelledby="budget-contact-title">
+    <section class="oca-budget-contact public-contact contact-oca" id="budget-contact" aria-labelledby="budget-contact-title">
         <p class="dae-kicker">Conversación / Alcance a medida</p>
         <h2 id="budget-contact-title">¿Cuál es su presupuesto? Conversemos.</h2>
         <p>Cuéntenos qué quiere lograr y el presupuesto que tiene en mente. Acordaremos el alcance antes de hablar de una propuesta.</p>
-        <p class="oca-contact-note">Este preview local no envía consultas; el canal de contacto todavía no está conectado.</p>
+        <form data-contact-form lang="es"><label>Nombre<input name="name" type="text" maxlength="120" required autocomplete="name"></label><label>Correo electrónico<input name="email" type="email" maxlength="254" required autocomplete="email"></label><label>Área de interés<select name="product" required><option value="servicios">Servicios</option><option value="cotizacion">Cotización</option><option value="otro">Otro</option></select></label><label>Presupuesto (opcional)<input name="budget" type="text" maxlength="120"  autocomplete="off"></label><label class="wide">Mensaje<textarea name="message" rows="5" minlength="10" maxlength="4000" required></textarea></label><label class="wide consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de estos datos para responder a mi consulta. No enviaré contraseñas ni información confidencial.</span></label><button type="submit">Enviar consulta</button><p class="wide" role="status" aria-live="polite"></p><noscript>Active JavaScript para enviar esta consulta.</noscript></form>
     </section>
 
     <!-- SERVICES -->
@@ -566,5 +567,6 @@
 
     <script src="assets/sophie-oca-interactions-v2.js" defer></script>
     <script src="assets/sophie-oca-fireball-v2.js?v=3" defer></script>
+<script src="assets/contact.js?v=20261020-live1" defer></script>
 </body>
 </html>
