@@ -34,81 +34,6 @@
             transition: background 0.6s ease, color 0.6s ease;
         }
 
-        /* THEME STATES */
-        body.dark {
-            background: #000000;
-            color: #ffffff;
-        }
-
-        body.light {
-            background: #ffffff;
-            color: #000000;
-        }
-
-        /* THEME INDICATOR */
-        .theme-indicator {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            border: 1px solid;
-            transition: all 0.6s ease;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        body.dark .theme-indicator {
-            border-color: #333;
-            background: rgba(0, 0, 0, 0.6);
-            color: #00ff00;
-        }
-
-        body.light .theme-indicator {
-            border-color: rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 0.8);
-            color: #2563eb;
-        }
-
-        /* ACCESS INDICATOR — mirrors theme-indicator, left side, links to aria.serviciosdeoca.com */
-        .access-indicator {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            border: 1px solid;
-            transition: all 0.6s ease;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            text-decoration: none;
-            user-select: none;
-            display: inline-block;
-        }
-
-        body.dark .access-indicator {
-            border-color: #333;
-            background: rgba(0, 0, 0, 0.6);
-            color: #9d00ff;
-        }
-
-        body.light .access-indicator {
-            border-color: rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 0.8);
-            color: #9d00ff;
-        }
-
-        .access-indicator:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(157, 0, 255, 0.25);
-        }
-
         /* HERO */
         .hero {
             min-height: 100vh;
@@ -320,27 +245,13 @@
                 grid-template-columns: 1fr;
             }
 
-            .theme-indicator {
-                top: 20px;
-                right: 20px;
-                font-size: 9px;
-                padding: 8px 16px;
-            }
-
-            .access-indicator {
-                top: 20px;
-                left: 20px;
-                font-size: 9px;
-                padding: 8px 16px;
-            }
-
             .service-card {
                 padding: 30px 24px;
             }
         }
     </style>
     <link rel="stylesheet" href="assets/CODEX-oca-aria-v1.css">
-    <link rel="stylesheet" href="assets/sophie-oca-nav-v1.css">
+
 <link rel="stylesheet" href="assets/sophie-monochrome-v1.css">
 <style>
     /* Launch artwork is the sole color treatment on this page section. */
@@ -420,29 +331,14 @@
         .mvp-news-copy { width: 100%; padding: 32px 26px 38px; }
     }
 </style>
-<script src="assets/sophie-theme-v2.js" defer></script>
+
 <link rel="stylesheet" href="assets/sophie-eleven-v1.css">
-<link rel="stylesheet" href="assets/sophie-oca-rain-v1.css?v=3">
+<link rel="stylesheet" href="assets/sophie-oca-rain-v1.css?v=20261020-lean">
 <link rel="stylesheet" href="assets/package-offers.css?v=20261019"><link rel="stylesheet" href="assets/aria-showcase/showcase.css?v=1"><script defer src="assets/aria-showcase/presence.js?v=1"></script><link rel="stylesheet" href="assets/contact.css?v=20261020-live1">
 </head>
-<body class="dark" data-presence="aria">
+<body class="light" data-presence="aria">
     <div class="oca-solar" aria-hidden="true"><canvas class="oca-glyph-fireball"></canvas></div>
-    <a href="https://aria.serviciosdeoca.com/" class="access-indicator">&#9670; A.R.I.A. / Showcase ↗</a>
-
-    <!-- THEME INDICATOR -->
-    <button type="button" class="theme-indicator" data-sophie-theme aria-label="Tema: Auto según su hora local. Cambiar a Oscuro.">◐ <span class="theme-label">Auto</span></button>
-
-    <nav class="site-nav" aria-label="Secciones principales">
-        <ul>
-            <li><a href="observatory/">FRIDAY ↗</a></li><li><a href="login/">Acceso OTP</a></li><li><a href="#planes">A.R.I.A.</a></li>
-            <li><a href="#budget-contact">Cotización</a></li>
-            <li><a href="https://aria.serviciosdeoca.com/">ARIA / Showcase ↗</a></li>
-            <li><a href="#proyectos">Proyectos</a></li>
-            <li><a href="#servicios">Servicios</a></li>
-            <li><a href="eleven/">ARIS / Arte</a></li>
-        </ul>
-    </nav>
-
+    <header class="oca-entry"><a href="login/" aria-label="Acceso personal con OTP">Acceso ↗</a></header>
     <!-- HERO -->
     <section class="hero">
         <h1 class="logo glitch-text" data-text="SERVICIOS DE OCA">SERVICIOS DE OCA</h1>
@@ -476,87 +372,12 @@
     </section>
 
     <section class="package-offers oca-packages" id="aria" aria-labelledby="aria-heading"><span id="planes"></span><header><p class="package-kicker">Su implementación / Tres escalas</p><h2 id="aria-heading">ARIA. ARIS. F.R.I.D.A.Y.</h2><p>Nuestra ARIA es un showcase. La suya será una instalación propia: sus cuentas, sus API keys y un alcance acordado.</p></header><div class="package-grid"><article class="package-card"><p class="package-kicker">01 / Entrada</p><h3>ARIA</h3><p>Su primer Autómata Recursivo de Inteligencias Artificiales, con un alcance concreto y cuentas propias.</p><ul><li>Configuración de un flujo de trabajo acordado</li><li>Conexión de proveedores con sus API keys</li><li>Documentación y mantenimiento programado</li></ul><div class="package-price"><strong>Desde US$499</strong><span>implementación inicial</span><strong>Desde US$299/mes</strong></div><a class="package-contact" href="#budget-contact">Conversemos ↗</a></article><article class="package-card"><p class="package-kicker">02 / Profesional</p><h3>ARIS</h3><p>Un sistema implementado on-site, en las instalaciones del cliente, para conectar herramientas, procesos y presencia digital.</p><ul><li>Integraciones definidas en la propuesta</li><li>Mayor presupuesto de IA e infraestructura</li><li>Actualizaciones y soporte con horas acordadas</li></ul><div class="package-price"><strong>Desde US$1,500</strong><span>implementación inicial</span><strong>Desde US$899/mes</strong></div><a class="package-contact" href="#budget-contact">Conversemos ↗</a></article><article class="package-card package-unavailable"><p class="package-kicker">03 / Avanzado · en preparación</p><h3>F.R.I.D.A.Y.</h3><p>Un sistema de mayor escala implementado on-site, en las instalaciones del cliente, según sus necesidades y capacidad requerida.</p><ul><li>Orquestación e infraestructura a medida</li><li>Integraciones y mantenimiento ampliados</li><li>Disponibilidad y alcance por confirmar</li></ul><div class="package-price"><strong>Contáctenos</strong><span>Alcance y presupuesto a medida · próximamente</span></div><a class="package-contact" href="#budget-contact">Consultar disponibilidad ↗</a></article></div><p class="package-note">Precios desde, en USD. Implementación y mensualidad se cobran por separado. La propuesta detalla mantenimiento, horas de soporte y presupuesto limitado de IA y servidor; no ofrece consumo ilimitado. En modalidad BYO, los pagos directos a proveedores se desglosan y se descuentan del total acordado, sin duplicar cargos. ARIS y F.R.I.D.A.Y. se implementan on-site: hardware, visitas, traslado y adecuaciones se acuerdan en la propuesta y no se presumen incluidos en el precio base. Impuestos, excedentes e integraciones adicionales se cotizan antes de contratar. F.R.I.D.A.Y. está en preparación, sin contratación inmediata.</p></section>
-    <section class="oca-projects" id="proyectos">
-        <p class="dae-kicker">02 / Ingeniería a medida · Honduras</p><h2>La IA también puede<br>trabajar en su oficina.</h2>
-        <p>Custom ARIA es nuestra implementación personalizada. Automatización privada, centros de datos, sistemas locales e integraciones empresariales se diseñan según su operación y presupuesto.</p>
-        <div class="oca-project-grid"><article><h3>Sobre su infraestructura</h3><p>Evaluamos equipos, sistemas y permisos antes de proponer automatización. Visitas, integraciones nuevas y trabajo físico se cotizan por proyecto.</p></article><article><h3>LLMs locales / On-premise</h3><p>Diseño de centros de datos e inferencia local con GPU. Hardware, modelos, capacidad y privacidad se dimensionan según la carga real y se cotizan aparte.</p></article><article><h3>Implementaciones privadas</h3><p>Conozca las opciones de infraestructura y despliegue personalizado en Lempyrλ.</p><a href="https://lempyra.com/#deployments">Ver deployments ↗</a></article></div>
-    </section>
-
+<section class="oca-implementation" aria-labelledby="implementation-title"><p class="dae-kicker">Implementación / Honduras</p><h2 id="implementation-title">En su operación.<br>Con sus herramientas.</h2><p>Acordamos un flujo de trabajo, conectamos las fuentes autorizadas y documentamos su uso y mantenimiento. ARIS y F.R.I.D.A.Y. se implementan on-site; hardware, visitas e integraciones se cotizan según el alcance.</p></section>
     <section class="oca-budget-contact public-contact contact-oca" id="budget-contact" aria-labelledby="budget-contact-title">
         <p class="dae-kicker">Conversación / Alcance a medida</p>
         <h2 id="budget-contact-title">¿Cuál es su presupuesto? Conversemos.</h2>
         <p>Cuéntenos qué quiere lograr y el presupuesto que tiene en mente. Acordaremos el alcance antes de hablar de una propuesta.</p>
         <form data-contact-form lang="es"><label>Nombre<input name="name" type="text" maxlength="120" required autocomplete="name"></label><label>Correo electrónico<input name="email" type="email" maxlength="254" required autocomplete="email"></label><label>Área de interés<select name="product" required><option value="servicios">Servicios</option><option value="cotizacion">Cotización</option><option value="otro">Otro</option></select></label><label>Presupuesto (opcional)<input name="budget" type="text" maxlength="120"  autocomplete="off"></label><label class="wide">Mensaje<textarea name="message" rows="5" minlength="10" maxlength="4000" required></textarea></label><label class="wide consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de estos datos para responder a mi consulta. No enviaré contraseñas ni información confidencial.</span></label><button type="submit">Enviar consulta</button><p class="wide" role="status" aria-live="polite"></p><noscript>Active JavaScript para enviar esta consulta.</noscript></form>
-    </section>
-
-    <!-- SERVICES -->
-    <section class="services-section" id="servicios">
-        <h2 class="section-title">Servicios</h2>
-
-        <div class="services-grid">
-            <div class="service-card">
-                <span class="service-icon">&#9881;</span>
-                <h3 class="service-title">Sistemas Operativos Corporativos</h3>
-                <p class="service-desc">Sistemas operativos configurados a medida. Desde estaciones de trabajo hasta servidores de producción con arquitectura reforzada.</p>
-                <span class="service-tag infra">Infraestructura</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9672;</span>
-                <h3 class="service-title">Ingeniería de LLM</h3>
-                <p class="service-desc">Modelos de lenguaje open source desplegados en infraestructura dedicada. Fine-tuning, optimización y despliegue adaptado a su operación.</p>
-                <span class="service-tag ai">Inteligencia Artificial</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9671;</span>
-                <h3 class="service-title">Integración Claude API</h3>
-                <p class="service-desc">Implementación profesional con la API de Anthropic. Agentes autónomos, procesamiento de documentos y flujos de trabajo inteligentes.</p>
-                <span class="service-tag ai">Inteligencia Artificial</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9670;</span>
-                <h3 class="service-title">ChatGPT Corporativo</h3>
-                <p class="service-desc">Configuración e integración de ChatGPT para entornos corporativos. Conectado a sus sistemas internos bajo sus políticas de seguridad.</p>
-                <span class="service-tag corporativo">Corporativo</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9673;</span>
-                <h3 class="service-title">Motor de Búsqueda Privado</h3>
-                <p class="service-desc">Motores de búsqueda internos personalizados. Indexe su documentación y datos corporativos con total privacidad.</p>
-                <span class="service-tag security">Privacidad</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9635;</span>
-                <h3 class="service-title">Arquitectura de Bases de Datos</h3>
-                <p class="service-desc">Implementaciones empresariales en Oracle y PostgreSQL, con soporte para cualquier motor relacional o NoSQL según su operación. Diseño distribuido, redundancia y alta disponibilidad.</p>
-                <span class="service-tag infra">Infraestructura</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9889;</span>
-                <h3 class="service-title">Cómputo GPU en la Nube</h3>
-                <p class="service-desc">Infraestructura GPU dedicada para entrenamiento de modelos, inferencia y procesamiento de cargas de trabajo intensivas.</p>
-                <span class="service-tag corporativo">Corporativo</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9670;</span>
-                <h3 class="service-title">Seguridad Zero Trust</h3>
-                <p class="service-desc">Arquitectura de red con verificación continua. Tunnels cifrados, DNS seguro y segmentación de acceso por identidad.</p>
-                <span class="service-tag security">Seguridad</span>
-            </div>
-
-            <div class="service-card">
-                <span class="service-icon">&#9650;</span>
-                <h3 class="service-title">Ciberseguridad Ofensiva y Defensiva</h3>
-                <p class="service-desc">Pruebas de penetración, auditorías de infraestructura, hardening de servidores y respuesta a incidentes. Evaluamos su postura de seguridad desde el punto de vista del atacante.</p>
-                <span class="service-tag security">Seguridad</span>
-            </div>
-        </div>
     </section>
 
     </main>
@@ -565,7 +386,7 @@
         &copy; 2026 Servicios de Oca &mdash; Honduras
     </footer>
 
-    <script src="assets/sophie-oca-interactions-v2.js" defer></script>
+
     <script src="assets/sophie-oca-fireball-v2.js?v=3" defer></script>
 <script src="assets/contact.js?v=20261020-live1" defer></script>
 </body>
