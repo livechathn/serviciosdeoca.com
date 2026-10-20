@@ -1,1 +1,7 @@
 .aria-showcase{align-items:center}.aria-showcase-entity{width:100%;min-width:0;display:grid;place-items:center}.aria-showcase .presence-canvas{display:block;width:min(100%,560px);aspect-ratio:1;height:auto}.aria-showcase .eleven-copy{min-width:0}@media(max-width:700px){.aria-showcase .presence-canvas{width:min(100%,380px)}}
+/* Keep the showcase opaque: animated background must never cross the entity or copy. */
+body .aria-showcase{background:#fff;--ink:#261329;--muted:#69576b;--line:#e4d7e2;color:#261329;isolation:isolate;position:relative}
+body .aria-showcase-entity,body .aria-showcase .eleven-copy{background:#fff;color:#261329}
+body .eleven-intro:not(.aria-showcase) .eleven-copy{background:#fff;color:#261329;--ink:#261329;--muted:#69576b;padding:clamp(20px,3vw,36px)}
+body .aria-showcase .eleven-label,body .eleven-intro:not(.aria-showcase) .eleven-label{color:#69576b}
+body .aria-showcase .eleven-link,body .eleven-intro:not(.aria-showcase) .eleven-link{color:#261329}
